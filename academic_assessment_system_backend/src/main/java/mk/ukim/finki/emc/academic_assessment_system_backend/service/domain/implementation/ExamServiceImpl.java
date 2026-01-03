@@ -42,6 +42,7 @@ public class ExamServiceImpl implements ExamService {
                     existingExam.setReservedLaboratories(exam.getReservedLaboratories());
                     existingExam.setStartTime(exam.getStartTime());
                     existingExam.setEndTime(exam.getEndTime());
+                    existingExam.setCourse(exam.getCourse());
                     return examRepository.save(existingExam);
                 });
     }

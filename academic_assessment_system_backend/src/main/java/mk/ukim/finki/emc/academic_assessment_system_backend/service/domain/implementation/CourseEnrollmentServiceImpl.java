@@ -48,4 +48,20 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         courseEnrollment.ifPresent(courseEnrollmentRepository::delete);
         return courseEnrollment;
     }
+
+    @Override
+    public List<CourseEnrollment> findAllByCourseId(Long courseId) {
+        return courseEnrollmentRepository.findAllByCourse_Id(courseId);
+    }
+
+    @Override
+    public List<CourseEnrollment> findAllByCourseIdWithStudentAndUser(Long courseId) {
+        return courseEnrollmentRepository.findAllByCourseIdWithStudentAndUser(courseId);
+    }
+
+    @Override
+    public boolean exists(Long courseId, Long studentId) {
+        return courseEnrollmentRepository.existsByCourse_IdAndStudent_Id(courseId, studentId);
+    }
+
 }

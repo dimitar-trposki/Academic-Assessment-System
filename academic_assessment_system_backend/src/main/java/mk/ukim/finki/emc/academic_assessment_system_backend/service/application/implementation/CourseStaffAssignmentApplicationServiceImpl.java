@@ -3,6 +3,7 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.service.application
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateCourseStaffAssignmentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseStaffAssignmentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Course;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseStaffAssignment;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseStaffAssignmentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.CourseService;
@@ -63,6 +64,16 @@ public class CourseStaffAssignmentApplicationServiceImpl implements CourseStaffA
         return courseStaffAssignmentService
                 .deleteById(id)
                 .map(DisplayCourseStaffAssignmentDto::from);
+    }
+
+    @Override
+    public List<CourseStaffAssignment> findByCourseId(Long courseId) {
+        return courseStaffAssignmentService.findByCourseId(courseId);
+    }
+
+    @Override
+    public void deleteByCourseId(Long courseId) {
+        courseStaffAssignmentService.deleteByCourseId(courseId);
     }
 
 }

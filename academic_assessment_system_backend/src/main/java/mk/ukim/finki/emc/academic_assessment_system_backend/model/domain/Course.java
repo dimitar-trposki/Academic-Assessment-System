@@ -44,14 +44,13 @@ public class Course {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<CourseStaffAssignment> courseStaffAssignments;
+    private List<CourseStaffAssignment> courseStaffAssignments = new ArrayList<>();
 
     public Course(String courseCode, String courseName, Integer semester, Integer academicYear) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.semester = semester;
         this.academicYear = academicYear;
-        this.courseStaffAssignments = new ArrayList<>();
     }
 }
 

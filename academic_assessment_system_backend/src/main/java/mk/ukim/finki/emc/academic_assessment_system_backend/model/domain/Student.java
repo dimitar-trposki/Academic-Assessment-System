@@ -31,7 +31,7 @@ public class Student {
     @Column(nullable = false, length = 120)
     private String major;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(
             name = "user_id",
             nullable = false,

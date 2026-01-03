@@ -17,4 +17,10 @@ public interface CourseEnrollmentService {
 
     Optional<CourseEnrollment> deleteById(Long id);
 
+    List<CourseEnrollment> findAllByCourseId(Long courseId);
+
+    List<CourseEnrollment> findAllByCourseIdWithStudentAndUser(Long courseId);
+
+    boolean exists(Long courseId, Long studentId);
+
 }

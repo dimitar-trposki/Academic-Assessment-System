@@ -38,7 +38,7 @@ public class User {
     @Column(name = "academic_role", nullable = false, length = 20)
     private AcademicRole academicRole;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Student student;
 
     public void setStudent(Student student) {

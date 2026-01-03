@@ -1,7 +1,11 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.web.controllers;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseEnrollmentApplicationService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateCourseDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseApplicationService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,6 +37,7 @@ import java.util.List;
 public class CourseController {
 
     private final CourseApplicationService courseApplicationService;
+    private final CourseEnrollmentApplicationService courseEnrollmentApplicationService;
 
     @Operation(
             summary = "Get all courses",
@@ -160,5 +166,69 @@ public class CourseController {
                 .deleteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Export enrolled students for a course (CSV)",
+            description = "Exports all students enrolled in the given course to a CSV file. " +
+                    "Columns: studentIndex, firstName, lastName, major, email, academicRole."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "CSV file successfully generated",
+                    content = @Content(
+                            mediaType = "text/csv"
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Course not found",
+                    content = @Content
+            )
+    })
+    @GetMapping(value = "/{id}/export", produces = "text/csv")
+    public ResponseEntity<ByteArrayResource> exportEnrolledStudentsCsv(@PathVariable Long id) {
+        byte[] csv = courseEnrollmentApplicationService.exportStudentsCsv(id);
+
+        DisplayCourseDto courseDto = courseApplicationService.findById(id).get();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=course_" + courseDto.courseCode() + "_students.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .contentLength(csv.length)
+                .body(new ByteArrayResource(csv));
+    }
+
+    @Operation(
+            summary = "Import enrolled students for a course (CSV)",
+            description = "Imports and enrolls students into the given course from a CSV file. " +
+                    "CSV must contain studentIndex in the first column (header optional)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Students successfully imported/enrolled",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = String.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV / student index not found / invalid data", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Course not found", content = @Content)
+    })
+    @PostMapping(value = "/{id}/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> importEnrolledStudentsCsv(
+            @PathVariable Long id,
+            @Parameter(
+                    description = "CSV file",
+                    required = true,
+                    schema = @Schema(type = "string", format = "binary")
+            )
+            @RequestParam("file") MultipartFile file
+    ) {
+        int imported = courseEnrollmentApplicationService.importStudentsCsv(id, file);
+        return ResponseEntity.ok("Imported enrollments: " + imported);
     }
 }

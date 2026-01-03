@@ -49,4 +49,14 @@ public class CourseStaffAssignmentServiceImpl implements CourseStaffAssignmentSe
         courseStaffAssignment.ifPresent(courseStaffAssignmentRepository::delete);
         return courseStaffAssignment;
     }
+
+    @Override
+    public List<CourseStaffAssignment> findByCourseId(Long courseId) {
+        return courseStaffAssignmentRepository.findByCourseId(courseId);
+    }
+
+    @Override
+    public void deleteByCourseId(Long courseId) {
+        courseStaffAssignmentRepository.deleteByCourseId(courseId);
+    }
 }

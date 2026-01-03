@@ -3,6 +3,7 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.service.application
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.StudentService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.UserService;
@@ -36,11 +37,15 @@ public class StudentApplicationServiceImpl implements StudentApplicationService 
     }
 
     @Override
-    public DisplayStudentDto save(CreateStudentDto createStudentDto) {
+    public Optional<DisplayStudentDto> save(CreateStudentDto createStudentDto) {
         Optional<User> user = userService.findById(createStudentDto.userId());
 
-        return DisplayStudentDto
-                .from(studentService.save(createStudentDto.toStudent(user.get())));
+        if (user.isPresent() && user.get().getAcademicRole().equals(AcademicRole.STUDENT)) {
+            return Optional.of(DisplayStudentDto
+                    .from(studentService.save(createStudentDto.toStudent(user.get()))));
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -58,4 +63,12 @@ public class StudentApplicationServiceImpl implements StudentApplicationService 
                 .deleteById(id)
                 .map(DisplayStudentDto::from);
     }
+
+    @Override
+    public Optional<DisplayStudentDto> findByStudentIndex(String studentIndex) {
+        return studentService
+                .findByStudentIndex(studentIndex)
+                .map(DisplayStudentDto::from);
+    }
+
 }

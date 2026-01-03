@@ -6,7 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Course;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseStaffAssignment;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.StaffRole;
 
+import java.util.Collections;
 import java.util.List;
 
 public record CreateCourseDto(
@@ -27,15 +30,35 @@ public record CreateCourseDto(
         @NotNull(message = "Academic year is required")
         @Min(value = 2000, message = "Academic year must be >= 2000")
         @Max(value = 2100, message = "Academic year must be <= 2100")
-        Integer academicYear
-) {
+        Integer academicYear,
 
+        List<Long> professorIds,
+
+        List<Long> assistantIds
+) {
     public static CreateCourseDto from(Course course) {
+        List<CourseStaffAssignment> assignments =
+                course.getCourseStaffAssignments() == null ? Collections.emptyList() : course.getCourseStaffAssignments();
+
+        List<Long> professorIds = assignments.stream()
+                .filter(a -> a.getStaffRole() == StaffRole.PROFESSOR)
+                .map(a -> a.getUser().getId())
+                .distinct()
+                .toList();
+
+        List<Long> assistantIds = assignments.stream()
+                .filter(a -> a.getStaffRole() == StaffRole.ASSISTANT)
+                .map(a -> a.getUser().getId())
+                .distinct()
+                .toList();
+
         return new CreateCourseDto(
                 course.getCourseCode(),
                 course.getCourseName(),
                 course.getSemester(),
-                course.getAcademicYear()
+                course.getAcademicYear(),
+                professorIds,
+                assistantIds
         );
     }
 

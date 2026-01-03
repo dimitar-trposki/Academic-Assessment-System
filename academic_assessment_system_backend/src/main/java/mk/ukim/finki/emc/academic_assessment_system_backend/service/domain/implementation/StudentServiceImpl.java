@@ -49,4 +49,9 @@ public class StudentServiceImpl implements StudentService {
         student.ifPresent(studentRepository::delete);
         return student;
     }
+
+    @Override
+    public Optional<Student> findByStudentIndex(String studentIndex) {
+        return studentRepository.findByStudentIndex(studentIndex);
+    }
 }

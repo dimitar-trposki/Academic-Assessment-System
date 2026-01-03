@@ -17,4 +17,8 @@ public interface CourseStaffAssignmentService {
 
     Optional<CourseStaffAssignment> deleteById(Long id);
 
+    List<CourseStaffAssignment> findByCourseId(Long courseId);
+
+    void deleteByCourseId(Long courseId);
+
 }

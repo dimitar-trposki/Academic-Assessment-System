@@ -10,7 +10,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentExamRegistrationDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentApplicationService;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentExamRegistrationApplicationService;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.StudentExamRegistrationService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +36,7 @@ import java.util.List;
 public class StudentController {
 
     private final StudentApplicationService studentApplicationService;
+    private final StudentExamRegistrationApplicationService studentExamRegistrationApplicationServiceService;
 
     @Operation(
             summary = "Get all students",
@@ -103,7 +107,11 @@ public class StudentController {
     public ResponseEntity<DisplayStudentDto> save(
             @Valid @RequestBody CreateStudentDto createStudentDto
     ) {
-        return ResponseEntity.ok(studentApplicationService.save(createStudentDto));
+        //return ResponseEntity.ok(studentApplicationService.save(createStudentDto));
+        return studentApplicationService
+                .save(createStudentDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(
@@ -161,5 +169,29 @@ public class StudentController {
                 .deleteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Get exam registrations for a student",
+            description = "Returns a list of exam registrations for the student with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved exam registrations",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayStudentExamRegistrationDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Student not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/exam-registrations")
+    public ResponseEntity<List<DisplayStudentExamRegistrationDto>> findStudentExamRegistrationByStudentId(@PathVariable Long id) {
+        return ResponseEntity.ok(studentExamRegistrationApplicationServiceService.findStudentExamRegistrationByStudentId(id));
     }
 }

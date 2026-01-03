@@ -9,7 +9,11 @@ public interface CourseService {
 
     List<Course> findAll();
 
+    List<Course> findAllWithStaff();
+
     Optional<Course> findById(Long id);
+
+    Optional<Course> findByIdWithStaff(Long id);
 
     Course save(Course course);
 

@@ -10,7 +10,11 @@ public interface CourseApplicationService {
 
     List<DisplayCourseDto> findAll();
 
+    List<DisplayCourseDto> findAllWithStaff();
+
     Optional<DisplayCourseDto> findById(Long id);
+
+    Optional<DisplayCourseDto> findByIdWithStaff(Long id);
 
     DisplayCourseDto save(CreateCourseDto createCourseDto);
 

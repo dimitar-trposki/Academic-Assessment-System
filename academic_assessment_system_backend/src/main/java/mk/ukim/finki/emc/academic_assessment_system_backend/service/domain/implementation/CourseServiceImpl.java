@@ -5,8 +5,7 @@ import mk.ukim.finki.emc.academic_assessment_system_backend.repository.CourseRep
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.CourseService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -23,8 +22,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<Course> findAllWithStaff() {
+        return courseRepository.findAllWithStaff();
+    }
+
+    @Override
     public Optional<Course> findById(Long id) {
         return courseRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Course> findByIdWithStaff(Long id) {
+        return courseRepository.findByIdWithStaff(id);
     }
 
     @Override

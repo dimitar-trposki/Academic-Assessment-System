@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Course;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Exam;
 
 import java.time.LocalDate;
@@ -24,6 +25,8 @@ public record CreateExamDto(
         @Min(value = 1, message = "Capacity must be at least 1")
         Integer capacityOfStudents,
 
+        Course course,
+
         @NotEmpty(message = "At least one laboratory must be reserved")
         List<String> reservedLaboratories,
 
@@ -41,6 +44,7 @@ public record CreateExamDto(
                 capacityOfStudents,
                 startTime,
                 endTime,
+                course,
                 reservedLaboratories
         );
     }
@@ -50,6 +54,7 @@ public record CreateExamDto(
                 exam.getSession(),
                 exam.getDateOfExam(),
                 exam.getCapacityOfStudents(),
+                exam.getCourse(),
                 exam.getReservedLaboratories(),
                 exam.getStartTime(),
                 exam.getEndTime()

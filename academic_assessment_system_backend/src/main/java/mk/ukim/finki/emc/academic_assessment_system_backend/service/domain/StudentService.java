@@ -17,4 +17,6 @@ public interface StudentService {
 
     Optional<Student> deleteById(Long id);
 
+    Optional<Student> findByStudentIndex(String studentIndex);
+
 }
