@@ -1,5 +1,6 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.implementation;
 
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseEnrollment;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseStaffAssignment;
 import mk.ukim.finki.emc.academic_assessment_system_backend.repository.CourseStaffAssignmentRepository;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.CourseStaffAssignmentService;
@@ -58,5 +59,10 @@ public class CourseStaffAssignmentServiceImpl implements CourseStaffAssignmentSe
     @Override
     public void deleteByCourseId(Long courseId) {
         courseStaffAssignmentRepository.deleteByCourseId(courseId);
+    }
+
+    @Override
+    public List<CourseStaffAssignment> findAllByCourseIdWithUser(Long courseId) {
+        return courseStaffAssignmentRepository.findAllByCourseIdWithUser(courseId);
     }
 }

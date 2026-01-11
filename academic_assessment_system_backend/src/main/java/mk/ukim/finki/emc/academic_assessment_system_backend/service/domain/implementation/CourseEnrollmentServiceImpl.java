@@ -64,4 +64,9 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         return courseEnrollmentRepository.existsByCourse_IdAndStudent_Id(courseId, studentId);
     }
 
+    @Override
+    public List<CourseEnrollment> findAllByStudentId(Long studentId) {
+        return courseEnrollmentRepository.findAllByStudent_Id(studentId);
+    }
+
 }

@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateStudentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseEnrollmentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentExamRegistrationDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseEnrollmentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentExamRegistrationApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.StudentExamRegistrationService;
@@ -37,6 +39,7 @@ public class StudentController {
 
     private final StudentApplicationService studentApplicationService;
     private final StudentExamRegistrationApplicationService studentExamRegistrationApplicationServiceService;
+    private final CourseEnrollmentApplicationService courseEnrollmentApplicationService;
 
     @Operation(
             summary = "Get all students",
@@ -103,7 +106,7 @@ public class StudentController {
                     content = @Content
             )
     })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayStudentDto> save(
             @Valid @RequestBody CreateStudentDto createStudentDto
     ) {
@@ -133,7 +136,7 @@ public class StudentController {
                     content = @Content
             )
     })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayStudentDto> update(
             @PathVariable Long id,
             @Valid @RequestBody CreateStudentDto createStudentDto
@@ -163,7 +166,7 @@ public class StudentController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<DisplayStudentDto> deleteById(@PathVariable Long id) {
         return studentApplicationService
                 .deleteById(id)
@@ -194,4 +197,29 @@ public class StudentController {
     public ResponseEntity<List<DisplayStudentExamRegistrationDto>> findStudentExamRegistrationByStudentId(@PathVariable Long id) {
         return ResponseEntity.ok(studentExamRegistrationApplicationServiceService.findStudentExamRegistrationByStudentId(id));
     }
+
+    @Operation(
+            summary = "Get course enrollments for a student",
+            description = "Returns a list of all course enrollments for the student with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved course enrollments",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Student not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/course-enrollments")
+    public ResponseEntity<List<DisplayCourseEnrollmentDto>> findCourseEnrollmentByStudentId(@PathVariable Long id) {
+        return ResponseEntity.ok(courseEnrollmentApplicationService.findAllByStudentId(id));
+    }
+
 }

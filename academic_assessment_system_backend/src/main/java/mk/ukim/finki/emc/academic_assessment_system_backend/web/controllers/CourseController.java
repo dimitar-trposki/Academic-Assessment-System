@@ -3,7 +3,12 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.web.controllers;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseEnrollmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseStaffAssignmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Student;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseEnrollmentApplicationService;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseStaffAssignmentApplicationService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -38,6 +43,7 @@ public class CourseController {
 
     private final CourseApplicationService courseApplicationService;
     private final CourseEnrollmentApplicationService courseEnrollmentApplicationService;
+    private final CourseStaffAssignmentApplicationService courseStaffAssignmentApplicationService;
 
     @Operation(
             summary = "Get all courses",
@@ -104,7 +110,7 @@ public class CourseController {
                     content = @Content
             )
     })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayCourseDto> save(
             @Valid @RequestBody CreateCourseDto createCourseDto
     ) {
@@ -130,7 +136,7 @@ public class CourseController {
                     content = @Content
             )
     })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayCourseDto> update(
             @PathVariable Long id,
             @Valid @RequestBody CreateCourseDto createCourseDto
@@ -160,7 +166,7 @@ public class CourseController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<DisplayCourseDto> deleteById(@PathVariable Long id) {
         return courseApplicationService
                 .deleteById(id)
@@ -231,4 +237,55 @@ public class CourseController {
         int imported = courseEnrollmentApplicationService.importStudentsCsv(id, file);
         return ResponseEntity.ok("Imported enrollments: " + imported);
     }
+
+    @Operation(
+            summary = "Get enrolled students for a course",
+            description = "Returns a list of all enrolled students in the course with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved enrolled students",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Course not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/enrolled-students")
+    public ResponseEntity<List<DisplayCourseEnrollmentDto>> getEnrolledStudents(@PathVariable Long id) {
+        return ResponseEntity.ok(courseEnrollmentApplicationService
+                .findAllByCourseIdWithStudentAndUser(id));
+    }
+
+    @Operation(
+            summary = "Get assigned staff for a course",
+            description = "Returns all staff members assigned to the course (professors, assistants)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved assigned staff list",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Course not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/assigned-staff")
+    public ResponseEntity<List<DisplayCourseStaffAssignmentDto>> getCourseAssignedStaff(@PathVariable Long id) {
+        return ResponseEntity.ok(courseStaffAssignmentApplicationService
+                .findAllByCourseIdWithUser(id));
+    }
+
 }

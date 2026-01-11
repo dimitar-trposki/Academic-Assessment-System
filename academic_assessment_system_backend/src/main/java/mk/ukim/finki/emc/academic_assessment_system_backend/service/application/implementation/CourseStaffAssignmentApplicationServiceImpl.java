@@ -76,4 +76,9 @@ public class CourseStaffAssignmentApplicationServiceImpl implements CourseStaffA
         courseStaffAssignmentService.deleteByCourseId(courseId);
     }
 
+    @Override
+    public List<DisplayCourseStaffAssignmentDto> findAllByCourseIdWithUser(Long courseId) {
+        return DisplayCourseStaffAssignmentDto.from(courseStaffAssignmentService.findAllByCourseIdWithUser(courseId));
+    }
+
 }

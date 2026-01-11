@@ -111,7 +111,7 @@ public class UserController {
                     content = @Content
             )
     })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayUserDto> save(
             @Valid @RequestBody CreateUserDto createUserDto
     ) {
@@ -137,7 +137,7 @@ public class UserController {
                     content = @Content
             )
     })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayUserDto> update(
             @PathVariable Long id,
             @Valid @RequestBody CreateUserDto createUserDto
@@ -167,7 +167,7 @@ public class UserController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<DisplayUserDto> deleteById(@PathVariable Long id) {
         return userApplicationService
                 .deleteById(id)

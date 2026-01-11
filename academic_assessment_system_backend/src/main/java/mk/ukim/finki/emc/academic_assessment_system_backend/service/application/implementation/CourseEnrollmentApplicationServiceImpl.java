@@ -160,6 +160,16 @@ public class CourseEnrollmentApplicationServiceImpl implements CourseEnrollmentA
         }
     }
 
+    @Override
+    public List<DisplayCourseEnrollmentDto> findAllByCourseIdWithStudentAndUser(Long courseId) {
+        return DisplayCourseEnrollmentDto.from(courseEnrollmentService.findAllByCourseIdWithStudentAndUser(courseId));
+    }
+
+    @Override
+    public List<DisplayCourseEnrollmentDto> findAllByStudentId(Long studentId) {
+        return DisplayCourseEnrollmentDto.from(courseEnrollmentService.findAllByStudentId(studentId));
+    }
+
     private String escapeCsv(String value) {
         if (value == null) return "";
         String v = value;

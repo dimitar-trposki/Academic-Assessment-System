@@ -110,7 +110,7 @@ public class ExamController {
                     content = @Content
             )
     })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayExamDto> save(
             @Valid @RequestBody CreateExamDto createExamDto
     ) {
@@ -136,7 +136,7 @@ public class ExamController {
                     content = @Content
             )
     })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DisplayExamDto> update(
             @PathVariable Long id,
             @Valid @RequestBody CreateExamDto createExamDto
@@ -166,7 +166,7 @@ public class ExamController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<DisplayExamDto> deleteById(@PathVariable Long id) {
         return examApplicationService
                 .deleteById(id)
@@ -326,6 +326,78 @@ public class ExamController {
                         "attachment; filename=\"exam_" + exam.course().getCourseCode() + "_absentStudents.csv\"")
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(new ByteArrayResource(csv));
+    }
+
+    @Operation(
+            summary = "Get registered students for an exam",
+            description = "Returns a list of all students registered for the exam with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved registered students",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayStudentExamRegistrationDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/registered-students")
+    public ResponseEntity<List<DisplayStudentExamRegistrationDto>> getRegisteredStudents(@PathVariable Long id) {
+        return ResponseEntity.ok(studentExamRegistrationApplicationService.findAllByExamIdAndExamStatus(id, ExamStatus.REGISTERED));
+    }
+
+    @Operation(
+            summary = "Get attended students for an exam",
+            description = "Returns a list of all students who attended the exam with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved attended students",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayStudentExamRegistrationDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/attended-students")
+    public ResponseEntity<List<DisplayStudentExamRegistrationDto>> getAttendedStudents(@PathVariable Long id) {
+        return ResponseEntity.ok(studentExamRegistrationApplicationService.findAllByExamIdAndExamStatus(id, ExamStatus.ATTENDED));
+    }
+
+    @Operation(
+            summary = "Get absent students for an exam",
+            description = "Returns a list of all students who were absent from the exam with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved absent students",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayStudentExamRegistrationDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/absent-students")
+    public ResponseEntity<List<DisplayStudentExamRegistrationDto>> getAbsentStudents(@PathVariable Long id) {
+        return ResponseEntity.ok(studentExamRegistrationApplicationService.findAllByExamIdAndExamStatus(id, ExamStatus.ABSENT));
     }
 
 }

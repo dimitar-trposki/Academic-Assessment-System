@@ -142,7 +142,9 @@ public class JwtSecurityWebConfig {
                         .requestMatchers("/h2/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/users/register",
-                                "/api/users/login"
+                                "/api/users/login",
+                                "/api/users/password-reset/request",
+                                "/api/users/password-reset/confirm"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/auth/register",

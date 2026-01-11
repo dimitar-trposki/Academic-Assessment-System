@@ -2,6 +2,7 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.service.application
 
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateCourseEnrollmentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseEnrollmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseEnrollment;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -22,5 +23,9 @@ public interface CourseEnrollmentApplicationService {
     byte[] exportStudentsCsv(Long courseId);
 
     int importStudentsCsv(Long courseId, MultipartFile file);
+
+    List<DisplayCourseEnrollmentDto> findAllByCourseIdWithStudentAndUser(Long courseId);
+
+    List<DisplayCourseEnrollmentDto> findAllByStudentId(Long studentId);
 
 }

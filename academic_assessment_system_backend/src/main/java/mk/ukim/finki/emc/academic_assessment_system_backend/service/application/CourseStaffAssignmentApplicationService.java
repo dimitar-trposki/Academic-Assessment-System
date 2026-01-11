@@ -2,6 +2,7 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.service.application
 
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateCourseStaffAssignmentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseStaffAssignmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseEnrollment;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseStaffAssignment;
 
 import java.util.List;
@@ -22,5 +23,7 @@ public interface CourseStaffAssignmentApplicationService {
     List<CourseStaffAssignment> findByCourseId(Long courseId);
 
     void deleteByCourseId(Long courseId);
+
+    List<DisplayCourseStaffAssignmentDto> findAllByCourseIdWithUser(Long courseId);
 
 }

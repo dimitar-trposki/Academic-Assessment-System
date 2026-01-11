@@ -1,5 +1,6 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.service.domain;
 
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Course;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseEnrollment;
 
 import java.util.List;
@@ -22,5 +23,7 @@ public interface CourseEnrollmentService {
     List<CourseEnrollment> findAllByCourseIdWithStudentAndUser(Long courseId);
 
     boolean exists(Long courseId, Long studentId);
+
+    List<CourseEnrollment> findAllByStudentId(Long studentId);
 
 }
