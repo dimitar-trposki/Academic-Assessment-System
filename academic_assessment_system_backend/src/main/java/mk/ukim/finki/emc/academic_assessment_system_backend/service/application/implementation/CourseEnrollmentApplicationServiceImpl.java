@@ -94,7 +94,7 @@ public class CourseEnrollmentApplicationServiceImpl implements CourseEnrollmentA
             sb.append(escapeCsv(u.getLastName())).append(",");
             sb.append(escapeCsv(s.getMajor())).append(",");
             sb.append(escapeCsv(u.getEmail())).append(",");
-            sb.append(escapeCsv(u.getAcademicRole() != null ? u.getAcademicRole().name() : "")).append("\n");
+            sb.append(escapeCsv(u.getUserRole() != null ? u.getUserRole().name() : "")).append("\n");
         }
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);

@@ -1,7 +1,7 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display;
 
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.UserRole;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public record DisplayUserDto(
         String firstName,
         String lastName,
         String email,
-        AcademicRole academicRole
+        UserRole userRole
 ) {
 
     public static DisplayUserDto from(User user) {
@@ -19,7 +19,7 @@ public record DisplayUserDto(
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getAcademicRole()
+                user.getUserRole()
         );
     }
 

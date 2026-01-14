@@ -1,14 +1,13 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -43,11 +42,15 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentExamRegistration> examRegistrations;
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseEnrollment> courseEnrollments;
+
     public Student(String studentIndex, String major, User user) {
         this.studentIndex = studentIndex;
         this.major = major;
         this.user = user;
         this.examRegistrations = new ArrayList<>();
+        this.courseEnrollments = new ArrayList<>();
     }
 
 }

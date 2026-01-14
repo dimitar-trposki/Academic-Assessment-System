@@ -1,0 +1,68 @@
+.home-root {
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+}
+
+.home-root .MuiCard-root:first-of-type {
+    border-radius: 24px;
+    background: radial-gradient(circle at top left, #e0f2fe 0, #eff6ff 35%, #ffffff 100%);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.15);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.home-root .MuiGrid-item:nth-of-type(2) .MuiCard-root {
+    border-radius: 24px;
+    background: linear-gradient(135deg, #020617, #0f172a);
+    color: #e5e7eb;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.home-root .MuiGrid-item:nth-of-type(2) .MuiTypography-subtitle2 {
+    color: #9ca3af;
+}
+
+.home-root .MuiGrid-item:nth-of-type(2) .MuiDivider-root {
+    border-color: rgba(148, 163, 184, 0.4);
+}
+
+.home-root h4 {
+    background: linear-gradient(135deg, #1d4ed8, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.home-root .MuiChip-root {
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.home-root .MuiTypography-body2 {
+    line-height: 1.5;
+}
+
+.home-root .MuiGrid-item:nth-of-type(n + 3) .MuiCard-root {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.home-root .MuiCard-root:first-of-type .MuiButton-root {
+    border-radius: 999px;
+    padding-inline: 1.3rem;
+    text-transform: none;
+    font-weight: 600;
+    box-shadow: none;
+    margin-right: 0.25rem;
+}
+
+.home-root .MuiCard-root:first-of-type .MuiButton-containedSecondary {
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.35);
+}
+
+.home-root .MuiCard-root:first-of-type .MuiButton-root:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+}

@@ -1,14 +1,13 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -38,6 +37,13 @@ public class Course {
 
     @Column(nullable = false)
     private Integer academicYear;
+
+    @OneToMany(
+            mappedBy = "course",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "course",

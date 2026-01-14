@@ -6,7 +6,7 @@ import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Exam;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Student;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.StudentExamRegistration;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.UserRole;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.ExamStatus;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentExamRegistrationApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.ExamService;
@@ -82,7 +82,7 @@ public class StudentExamRegistrationApplicationServiceImpl implements StudentExa
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (user.getAcademicRole() != AcademicRole.STUDENT) {
+        if (user.getUserRole() != UserRole.STUDENT) {
             throw new RuntimeException("Only STUDENT can register for exams");
         }
 

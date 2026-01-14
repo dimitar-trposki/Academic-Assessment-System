@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import userRepository from "../repository/userRepository.js";
+import useStudents from "./useStudents.js";
 
 const initialState = {
     "users": [],
@@ -8,6 +9,13 @@ const initialState = {
 
 const useUsers = () => {
     const [state, setState] = useState(initialState);
+
+    const {
+        students,
+        loading: studentsLoading,
+        onAdd: addStudent,
+        onDelete: deleteStudent,
+    } = useStudents();
 
     const fetchUsers = useCallback(() => {
         userRepository
@@ -31,15 +39,31 @@ const useUsers = () => {
             .catch((error) => console.log(error));
     }, []);
 
-    const onAdd = useCallback((data) => {
-        userRepository
-            .add(data)
-            .then(() => {
-                console.log("Successfully added a new user.");
-                fetchUsers();
-            })
-            .catch((error) => console.log(error));
+    // const onAdd = useCallback((data) => {
+    //     userRepository
+    //         .add(data)
+    //         .then((response) => {
+    //             console.log("Successfully added a new user.");
+    //             fetchUsers();
+    //             return response.data;
+    //         })
+    //         .catch((error) => {
+    //             console.log(error)
+    //             throw error;
+    //         });
+    //
+    // }, [fetchUsers]);
 
+    const onAdd = useCallback(async (data) => {
+        try {
+            const response = await userRepository.add(data);
+            console.log("Successfully added a new user.");
+            await fetchUsers();
+            return response.data;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
     }, [fetchUsers]);
 
     const onEdit = useCallback((id, data) => {
@@ -103,6 +127,18 @@ const useUsers = () => {
             .catch((error) => console.log(error));
     }, [fetchUsers]);
 
+    // const importUsers = useCallback(async (data) => {
+    //     try {
+    //         const response = await userRepository.importUsers(data);
+    //         console.log("Successfully imported users.");
+    //         await fetchUsers();
+    //         return response.data;
+    //     } catch (error) {
+    //         console.log(error);
+    //         throw error;
+    //     }
+    // }, [fetchUsers]);
+
     const exportUsers = useCallback(() => {
         return userRepository
             .exportUsers()
@@ -118,7 +154,7 @@ const useUsers = () => {
             .requestPasswordReset(data)
             .then((response) => {
                 console.log("Password reset request sent.");
-                return response;
+                return response.data;
             })
             .catch((error) => console.log(error));
     }, []);
@@ -128,7 +164,7 @@ const useUsers = () => {
             .confirmPasswordReset(data)
             .then((response) => {
                 console.log("Password reset confirmed.");
-                return response;
+                return response.data;
             })
             .catch((error) => console.log(error));
     }, []);
@@ -150,6 +186,7 @@ const useUsers = () => {
         exportUsers: exportUsers,
         requestPasswordReset: requestPasswordReset,
         confirmPasswordReset: confirmPasswordReset,
+        fetchUsers: fetchUsers,
     };
 };
 

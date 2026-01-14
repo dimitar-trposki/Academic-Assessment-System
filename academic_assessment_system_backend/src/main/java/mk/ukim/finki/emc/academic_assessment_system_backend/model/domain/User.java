@@ -1,12 +1,14 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
+import lombok.*;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.UserRole;
 
-@Data
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -31,15 +33,22 @@ public class User {
     @Column(nullable = false, length = 150)
     private String email;
 
-    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "academic_role", nullable = false, length = 20)
-    private AcademicRole academicRole;
+    private UserRole userRole;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Student student;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<CourseStaffAssignment> courseStaffAssignments = new ArrayList<>();
 
     public void setStudent(Student student) {
         this.student = student;
@@ -48,12 +57,12 @@ public class User {
         }
     }
 
-    public User(String firstName, String lastName, String email, String password, AcademicRole academicRole) {
+    public User(String firstName, String lastName, String email, String password, UserRole userRole) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.academicRole = academicRole;
+        this.userRole = userRole;
     }
 
 }

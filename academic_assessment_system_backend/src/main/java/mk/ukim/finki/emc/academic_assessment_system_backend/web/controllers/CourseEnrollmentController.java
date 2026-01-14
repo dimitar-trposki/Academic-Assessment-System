@@ -1,6 +1,7 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,17 +10,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateCourseEnrollmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseEnrollmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseEnrollmentApplicationService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/course-enrollments", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/courses", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:3000")
 @Validated
 @RequiredArgsConstructor
@@ -30,34 +36,80 @@ import java.util.List;
 public class CourseEnrollmentController {
 
     private final CourseEnrollmentApplicationService courseEnrollmentApplicationService;
+    private final CourseApplicationService courseApplicationService;
 
     @Operation(
-            summary = "Get all course enrollments",
-            description = "Returns a list of all course enrollments (student-course relationships)."
+            summary = "Export enrolled students for a course (CSV)",
+            description = "Exports all students enrolled in the given course to a CSV file. " +
+                    "Columns: studentIndex, firstName, lastName, major, email, academicRole."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successfully retrieved list of enrollments",
+                    description = "CSV file successfully generated",
                     content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+                            mediaType = "text/csv"
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Course not found",
+                    content = @Content
             )
     })
-    @GetMapping
-    public ResponseEntity<List<DisplayCourseEnrollmentDto>> findAll() {
-        return ResponseEntity.ok(courseEnrollmentApplicationService.findAll());
+    @GetMapping(value = "/{id}/export", produces = "text/csv")
+    public ResponseEntity<ByteArrayResource> exportEnrolledStudentsCsv(@PathVariable Long id) {
+        byte[] csv = courseEnrollmentApplicationService.exportStudentsCsv(id);
+
+        DisplayCourseDto courseDto = courseApplicationService.findById(id).get();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=course_" + courseDto.courseCode() + "_students.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .contentLength(csv.length)
+                .body(new ByteArrayResource(csv));
     }
 
     @Operation(
-            summary = "Get course enrollment by ID",
-            description = "Returns a course enrollment based on its ID."
+            summary = "Import enrolled students for a course (CSV)",
+            description = "Imports and enrolls students into the given course from a CSV file. " +
+                    "CSV must contain studentIndex in the first column (header optional)."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Enrollment found",
+                    description = "Students successfully imported/enrolled",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = String.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV / student index not found / invalid data", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Course not found", content = @Content)
+    })
+    @PostMapping(value = "/{courseId}/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> importEnrolledStudentsCsv(
+            @PathVariable Long courseId,
+            @Parameter(
+                    description = "CSV file",
+                    required = true,
+                    schema = @Schema(type = "string", format = "binary")
+            )
+            @RequestParam("file") MultipartFile file
+    ) {
+        int imported = courseEnrollmentApplicationService.importStudentsCsv(courseId, file);
+        return ResponseEntity.ok("Imported enrollments: " + imported);
+    }
+
+    @Operation(
+            summary = "Get enrolled students for a course",
+            description = "Returns a list of all enrolled students in the course with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved enrolled students",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
@@ -65,73 +117,117 @@ public class CourseEnrollmentController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Enrollment not found",
+                    description = "Course not found",
                     content = @Content
             )
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<DisplayCourseEnrollmentDto> findById(@PathVariable Long id) {
-        return courseEnrollmentApplicationService
-                .findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/{courseId}/enrolled-students")
+    public ResponseEntity<List<DisplayCourseEnrollmentDto>> getEnrolledStudents(@PathVariable Long courseId) {
+        return ResponseEntity.ok(courseEnrollmentApplicationService
+                .findAllByCourseIdWithStudentAndUser(courseId));
     }
 
-    @Operation(
-            summary = "Create a course enrollment",
-            description = "Enrolls a student into a course using studentId and courseId."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Enrollment successfully created",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid input data",
-                    content = @Content
-            )
-    })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DisplayCourseEnrollmentDto> save(
-            @Valid @RequestBody CreateCourseEnrollmentDto createCourseEnrollmentDto
-    ) {
-        return ResponseEntity.ok(courseEnrollmentApplicationService.save(createCourseEnrollmentDto));
-    }
+//    @Operation(
+//            summary = "Get all course enrollments",
+//            description = "Returns a list of all course enrollments (student-course relationships)."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Successfully retrieved list of enrollments",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+//                    )
+//            )
+//    })
+//    @GetMapping
+//    public ResponseEntity<List<DisplayCourseEnrollmentDto>> findAll() {
+//        return ResponseEntity.ok(courseEnrollmentApplicationService.findAll());
+//    }
 
-    @Operation(
-            summary = "Update a course enrollment",
-            description = "Updates the enrollment with the given ID."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Enrollment successfully updated",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Enrollment not found",
-                    content = @Content
-            )
-    })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DisplayCourseEnrollmentDto> update(
-            @PathVariable Long id,
-            @Valid @RequestBody CreateCourseEnrollmentDto createCourseEnrollmentDto
-    ) {
-        return courseEnrollmentApplicationService
-                .update(id, createCourseEnrollmentDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+//    @Operation(
+//            summary = "Get course enrollment by ID",
+//            description = "Returns a course enrollment based on its ID."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Enrollment found",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "Enrollment not found",
+//                    content = @Content
+//            )
+//    })
+//    @GetMapping("/{id}")
+//    public ResponseEntity<DisplayCourseEnrollmentDto> findById(@PathVariable Long id) {
+//        return courseEnrollmentApplicationService
+//                .findById(id)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+
+//    @Operation(
+//            summary = "Create a course enrollment",
+//            description = "Enrolls a student into a course using studentId and courseId."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Enrollment successfully created",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "400",
+//                    description = "Invalid input data",
+//                    content = @Content
+//            )
+//    })
+//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<DisplayCourseEnrollmentDto> save(
+//            @Valid @RequestBody CreateCourseEnrollmentDto createCourseEnrollmentDto
+//    ) {
+//        return ResponseEntity.ok(courseEnrollmentApplicationService.save(createCourseEnrollmentDto));
+//    }
+
+//    @Operation(
+//            summary = "Update a course enrollment",
+//            description = "Updates the enrollment with the given ID."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Enrollment successfully updated",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "Enrollment not found",
+//                    content = @Content
+//            )
+//    })
+//    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<DisplayCourseEnrollmentDto> update(
+//            @PathVariable Long id,
+//            @Valid @RequestBody CreateCourseEnrollmentDto createCourseEnrollmentDto
+//    ) {
+//        return courseEnrollmentApplicationService
+//                .update(id, createCourseEnrollmentDto)
+//                .map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
 
     @Operation(
             summary = "Delete a course enrollment",
@@ -152,8 +248,8 @@ public class CourseEnrollmentController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<DisplayCourseEnrollmentDto> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{courseId}/{id}/delete-enrollment")
+    public ResponseEntity<DisplayCourseEnrollmentDto> deleteById(@PathVariable Long courseId, @PathVariable Long id) {
         return courseEnrollmentApplicationService
                 .deleteById(id)
                 .map(ResponseEntity::ok)

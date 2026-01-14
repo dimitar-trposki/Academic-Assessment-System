@@ -1,6 +1,5 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display;
 
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Course;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Exam;
 
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ public record DisplayExamDto(
         String session,
         LocalDate dateOfExam,
         Integer capacityOfStudents,
-        Course course,
+        DisplayCourseDto course,
         List<String> reservedLaboratories,
         LocalTime startTime,
         LocalTime endTime
@@ -24,7 +23,7 @@ public record DisplayExamDto(
                 exam.getSession(),
                 exam.getDateOfExam(),
                 exam.getCapacityOfStudents(),
-                exam.getCourse(),
+                DisplayCourseDto.from(exam.getCourse()),
                 exam.getReservedLaboratories(),
                 exam.getStartTime(),
                 exam.getEndTime()

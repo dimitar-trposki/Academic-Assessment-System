@@ -15,7 +15,9 @@ public interface StudentService {
 
     Optional<Student> update(Long id, Student student);
 
-    Optional<Student> deleteById(Long id);
+    Optional<Student> deleteByIdWithUser(Long id);
+
+    Optional<Student> deleteByIdWithoutUser(Long id);
 
     Optional<Student> findByStudentIndex(String studentIndex);
 

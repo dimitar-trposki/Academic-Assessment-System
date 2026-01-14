@@ -1,0 +1,34 @@
+/* Root container spacing */
+.courses-page-root {
+    width: 100%;
+}
+
+/* Title styling (same style as homepage titles) */
+.page-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #1d4ed8, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Subtitle under the title */
+.page-subtitle {
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* Wrapper for header row */
+.courses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+/* This keeps layout clean if needed for more components later */
+.courses-content {
+    width: 100%;
+    margin-top: 0.5rem;
+}

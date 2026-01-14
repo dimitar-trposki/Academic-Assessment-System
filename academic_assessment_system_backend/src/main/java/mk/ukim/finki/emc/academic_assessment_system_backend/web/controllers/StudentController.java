@@ -15,7 +15,6 @@ import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.D
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseEnrollmentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentExamRegistrationApplicationService;
-import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.StudentExamRegistrationService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -148,8 +147,8 @@ public class StudentController {
     }
 
     @Operation(
-            summary = "Delete a student",
-            description = "Deletes the student with the given ID."
+            summary = "Delete a student with user",
+            description = "Deletes the student with the given ID and the associated user."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -166,10 +165,37 @@ public class StudentController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}/delete")
-    public ResponseEntity<DisplayStudentDto> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{id}/delete-with-user")
+    public ResponseEntity<DisplayStudentDto> deleteByIdWithUser(@PathVariable Long id) {
         return studentApplicationService
-                .deleteById(id)
+                .deleteByIdWithUser(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Delete a student without user",
+            description = "Deletes the student with the given ID without the associated user."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Student successfully deleted",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayStudentDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Student not found",
+                    content = @Content
+            )
+    })
+    @DeleteMapping("/{id}/delete-without-user")
+    public ResponseEntity<DisplayStudentDto> deleteByIdWithoutUser(@PathVariable Long id) {
+        return studentApplicationService
+                .deleteByIdWithoutUser(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

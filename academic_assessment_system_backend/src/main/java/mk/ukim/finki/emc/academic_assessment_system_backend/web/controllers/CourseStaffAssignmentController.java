@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-        value = "/api/course-staff-assignments",
+        value = "/api/courses",
         produces = MediaType.APPLICATION_JSON_VALUE
 )
 @CrossOrigin(origins = "http://localhost:3000")
@@ -35,32 +35,13 @@ public class CourseStaffAssignmentController {
     private final CourseStaffAssignmentApplicationService courseStaffAssignmentApplicationService;
 
     @Operation(
-            summary = "Get all course staff assignments",
-            description = "Returns all staff assignments for all courses."
+            summary = "Get assigned staff for a course",
+            description = "Returns all staff members assigned to the course (professors, assistants)."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successfully retrieved assignments",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
-                    )
-            )
-    })
-    @GetMapping
-    public ResponseEntity<List<DisplayCourseStaffAssignmentDto>> findAll() {
-        return ResponseEntity.ok(courseStaffAssignmentApplicationService.findAll());
-    }
-
-    @Operation(
-            summary = "Get course staff assignment by ID",
-            description = "Returns a staff assignment based on its ID."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Assignment found",
+                    description = "Successfully retrieved assigned staff list",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
@@ -68,75 +49,119 @@ public class CourseStaffAssignmentController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Assignment not found",
+                    description = "Course not found",
                     content = @Content
             )
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<DisplayCourseStaffAssignmentDto> findById(@PathVariable Long id) {
-        return courseStaffAssignmentApplicationService
-                .findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/{courseId}/assigned-staff")
+    public ResponseEntity<List<DisplayCourseStaffAssignmentDto>> getCourseAssignedStaff(@PathVariable Long courseId) {
+        return ResponseEntity.ok(courseStaffAssignmentApplicationService
+                .findAllByCourseIdWithUser(courseId));
     }
 
-    @Operation(
-            summary = "Create a course staff assignment",
-            description = "Assigns a professor or assistant to a course."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Assignment successfully created",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid input data",
-                    content = @Content
-            )
-    })
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DisplayCourseStaffAssignmentDto> save(
-            @Valid @RequestBody CreateCourseStaffAssignmentDto createCourseStaffAssignmentDto
-    ) {
-        return ResponseEntity.ok(
-                courseStaffAssignmentApplicationService.save(createCourseStaffAssignmentDto)
-        );
-    }
+//    @Operation(
+//            summary = "Get all course staff assignments",
+//            description = "Returns all staff assignments for all courses."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Successfully retrieved assignments",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
+//                    )
+//            )
+//    })
+//    @GetMapping("")
+//    public ResponseEntity<List<DisplayCourseStaffAssignmentDto>> findAll() {
+//        return ResponseEntity.ok(courseStaffAssignmentApplicationService.findAll());
+//    }
 
-    @Operation(
-            summary = "Update a course staff assignment",
-            description = "Updates the staff assignment with the given ID."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Assignment successfully updated",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Assignment not found",
-                    content = @Content
-            )
-    })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DisplayCourseStaffAssignmentDto> update(
-            @PathVariable Long id,
-            @Valid @RequestBody CreateCourseStaffAssignmentDto createCourseStaffAssignmentDto
-    ) {
-        return courseStaffAssignmentApplicationService
-                .update(id, createCourseStaffAssignmentDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+//    @Operation(
+//            summary = "Get course staff assignment by ID",
+//            description = "Returns a staff assignment based on its ID."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Assignment found",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "Assignment not found",
+//                    content = @Content
+//            )
+//    })
+//    @GetMapping("/{id}")
+//    public ResponseEntity<DisplayCourseStaffAssignmentDto> findById(@PathVariable Long id) {
+//        return courseStaffAssignmentApplicationService
+//                .findById(id)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+
+//    @Operation(
+//            summary = "Create a course staff assignment",
+//            description = "Assigns a professor or assistant to a course."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Assignment successfully created",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "400",
+//                    description = "Invalid input data",
+//                    content = @Content
+//            )
+//    })
+//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<DisplayCourseStaffAssignmentDto> save(
+//            @Valid @RequestBody CreateCourseStaffAssignmentDto createCourseStaffAssignmentDto
+//    ) {
+//        return ResponseEntity.ok(
+//                courseStaffAssignmentApplicationService.save(createCourseStaffAssignmentDto)
+//        );
+//    }
+
+//    @Operation(
+//            summary = "Update a course staff assignment",
+//            description = "Updates the staff assignment with the given ID."
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Assignment successfully updated",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = DisplayCourseStaffAssignmentDto.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "Assignment not found",
+//                    content = @Content
+//            )
+//    })
+//    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<DisplayCourseStaffAssignmentDto> update(
+//            @PathVariable Long id,
+//            @Valid @RequestBody CreateCourseStaffAssignmentDto createCourseStaffAssignmentDto
+//    ) {
+//        return courseStaffAssignmentApplicationService
+//                .update(id, createCourseStaffAssignmentDto)
+//                .map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
+//    }
 
     @Operation(
             summary = "Delete a course staff assignment",
@@ -157,8 +182,8 @@ public class CourseStaffAssignmentController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<DisplayCourseStaffAssignmentDto> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{courseId}/{id}/delete-assignment/")
+    public ResponseEntity<DisplayCourseStaffAssignmentDto> deleteById(@PathVariable Long courseId, @PathVariable Long id) {
         return courseStaffAssignmentApplicationService
                 .deleteById(id)
                 .map(ResponseEntity::ok)

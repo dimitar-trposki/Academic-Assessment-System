@@ -9,7 +9,10 @@ public record DisplayCourseStaffAssignmentDto(
         Long id,
         Long userId,
         Long courseId,
-        StaffRole staffRole
+        StaffRole staffRole,
+        String userFirstName,
+        String userLastName,
+        String userEmail
 ) {
 
     public static DisplayCourseStaffAssignmentDto from(CourseStaffAssignment assignment) {
@@ -17,7 +20,10 @@ public record DisplayCourseStaffAssignmentDto(
                 assignment.getId(),
                 assignment.getUser().getId(),
                 assignment.getCourse().getId(),
-                assignment.getStaffRole()
+                assignment.getStaffRole(),
+                assignment.getUser().getFirstName(),
+                assignment.getUser().getLastName(),
+                assignment.getUser().getEmail()
         );
     }
 

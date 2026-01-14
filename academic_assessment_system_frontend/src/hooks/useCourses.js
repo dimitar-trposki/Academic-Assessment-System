@@ -62,51 +62,6 @@ const useCourses = () => {
             .catch((error) => console.log(error));
     }, [fetchCourses]);
 
-    const exportEnrolledStudentsCsv = useCallback((id) => {
-        return courseRepository
-            .exportEnrolledStudentsCsv(id)
-            .then((response) => {
-                console.log(`Exported enrolled students CSV for course ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const importEnrolledStudentsCsv = useCallback(
-        (id, data) => {
-            return courseRepository
-                .importEnrolledStudentsCsv(id, data)
-                .then(() => {
-                    console.log(
-                        `Imported enrolled students CSV for course ${id}`
-                    );
-                    fetchCourses();
-                })
-                .catch((error) => console.log(error));
-        },
-        [fetchCourses]
-    );
-
-    const getEnrolledStudents = useCallback((id) => {
-        return courseRepository
-            .getEnrolledStudents(id)
-            .then((response) => {
-                console.log(`Enrolled students for course ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const getCourseAssignedStaff = useCallback((id) => {
-        return courseRepository
-            .getCourseAssignedStaff(id)
-            .then((response) => {
-                console.log(`Assigned staff for course ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
     useEffect(() => {
         fetchCourses();
     }, [fetchCourses]);
@@ -117,10 +72,6 @@ const useCourses = () => {
         onEdit: onEdit,
         onDelete: onDelete,
         findById: findById,
-        exportEnrolledStudentsCsv: exportEnrolledStudentsCsv,
-        importEnrolledStudentsCsv: importEnrolledStudentsCsv,
-        getEnrolledStudents: getEnrolledStudents,
-        getCourseAssignedStaff: getCourseAssignedStaff,
     };
 };
 

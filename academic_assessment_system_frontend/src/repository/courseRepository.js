@@ -16,18 +16,6 @@ const courseRepository = {
     delete: async (id) => {
         return await axiosInstance.delete(`/courses/${id}/delete`);
     },
-    exportEnrolledStudentsCsv: async (id) => {
-        return await axiosInstance.get(`/courses/${id}/export`);
-    },
-    importEnrolledStudentsCsv: async (id, data) => {
-        return await axiosInstance.post(`/courses/${id}/import`, data);
-    },
-    getEnrolledStudents: async (id) => {
-        return await axiosInstance.get(`/courses/${id}/enrolled-students`);
-    },
-    getCourseAssignedStaff: async (id) => {
-        return await axiosInstance.get(`/courses/${id}/assigned-staff`);
-    },
 };
 
 export default courseRepository;

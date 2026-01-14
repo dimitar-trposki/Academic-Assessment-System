@@ -17,7 +17,9 @@ public interface StudentApplicationService {
 
     Optional<DisplayStudentDto> update(Long id, CreateStudentDto createStudentDto);
 
-    Optional<DisplayStudentDto> deleteById(Long id);
+    Optional<DisplayStudentDto> deleteByIdWithUser(Long id);
+
+    Optional<DisplayStudentDto> deleteByIdWithoutUser(Long id);
 
     Optional<DisplayStudentDto> findByStudentIndex(String studentIndex);
 

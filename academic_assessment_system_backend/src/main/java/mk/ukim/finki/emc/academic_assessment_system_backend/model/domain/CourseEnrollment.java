@@ -1,11 +1,10 @@
 package mk.ukim.finki.emc.academic_assessment_system_backend.model.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,4 +39,8 @@ public class CourseEnrollment {
     )
     private Course course;
 
+    public CourseEnrollment(Student student, Course course) {
+        this.student = student;
+        this.course = course;
+    }
 }

@@ -3,7 +3,7 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.service.application
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.UserRole;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.StudentService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.UserService;
@@ -40,7 +40,7 @@ public class StudentApplicationServiceImpl implements StudentApplicationService 
     public Optional<DisplayStudentDto> save(CreateStudentDto createStudentDto) {
         Optional<User> user = userService.findById(createStudentDto.userId());
 
-        if (user.isPresent() && user.get().getAcademicRole().equals(AcademicRole.STUDENT)) {
+        if (user.isPresent() && user.get().getUserRole().equals(UserRole.STUDENT)) {
             return Optional.of(DisplayStudentDto
                     .from(studentService.save(createStudentDto.toStudent(user.get()))));
         }
@@ -58,9 +58,16 @@ public class StudentApplicationServiceImpl implements StudentApplicationService 
     }
 
     @Override
-    public Optional<DisplayStudentDto> deleteById(Long id) {
+    public Optional<DisplayStudentDto> deleteByIdWithUser(Long id) {
         return studentService
-                .deleteById(id)
+                .deleteByIdWithUser(id)
+                .map(DisplayStudentDto::from);
+    }
+
+    @Override
+    public Optional<DisplayStudentDto> deleteByIdWithoutUser(Long id) {
+        return studentService
+                .deleteByIdWithoutUser(id)
                 .map(DisplayStudentDto::from);
     }
 

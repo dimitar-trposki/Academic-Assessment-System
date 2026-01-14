@@ -150,7 +150,8 @@ public class JwtSecurityWebConfig {
                                 "/api/auth/register",
                                 "/api/auth/login"
                         ).permitAll()
-                        .requestMatchers("/api/**").authenticated()
+//                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

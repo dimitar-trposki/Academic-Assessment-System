@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.UserRole;
 
 import java.util.List;
 
@@ -23,12 +23,12 @@ public record CreateUserDto(
         @Size(max = 150, message = "Email must be at most 150 characters")
         String email,
 
-        @NotBlank(message = "Password is required")
+//        @NotBlank(message = "Password is required")
         @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
         String password,
 
-        @NotNull(message = "Academic role is required")
-        AcademicRole academicRole
+        @NotNull(message = "User role is required")
+        UserRole userRole
 ) {
 
     public User toUser() {
@@ -37,7 +37,7 @@ public record CreateUserDto(
         user.setLastName(lastName);
         user.setEmail(email);
         user.setPassword(password);
-        user.setAcademicRole(academicRole);
+        user.setUserRole(userRole);
         return user;
     }
 
@@ -47,7 +47,7 @@ public record CreateUserDto(
                 user.getLastName(),
                 user.getEmail(),
                 null, // never expose password
-                user.getAcademicRole()
+                user.getUserRole()
         );
     }
 

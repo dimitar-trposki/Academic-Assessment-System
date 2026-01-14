@@ -13,8 +13,11 @@ const studentRepository = {
     edit: async (id, data) => {
         return await axiosInstance.put(`/students/${id}/edit`, data);
     },
-    delete: async (id) => {
-        return await axiosInstance.delete(`/students/${id}/delete`);
+    deleteWithUser: async (id) => {
+        return await axiosInstance.delete(`/students/${id}/delete-with-user`);
+    },
+    deleteWithoutUser: async (id) => {
+        return await axiosInstance.delete(`/students/${id}/delete-without-user`);
     },
     findStudentExamRegistrationByStudentId: async (id) => {
         return await axiosInstance.get(`/students/${id}/exam-registrations`);

@@ -1,0 +1,428 @@
+import React, {useEffect, useState, useCallback} from "react";
+import "./ExamDetails.css";
+
+import {
+    Box,
+    Button,
+    Chip,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Grid,
+    Stack,
+    Typography,
+} from "@mui/material";
+
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import DownloadIcon from "@mui/icons-material/Download";
+import UploadIcon from "@mui/icons-material/Upload";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+
+const normalizeTime = (t) => {
+    if (!t) return "";
+    return t.substring(0, 5);
+};
+
+const ExamDetails = ({
+                         open,
+                         onClose,
+                         examId,
+                         findById,
+                         registerForExam,
+                         exportRegisteredStudents,
+                         importAttendedStudents,
+                         exportAttendedStudents,
+                         exportAbsentStudents,
+                         getRegisteredStudents,
+                         getAttendedStudents,
+                         getAbsentStudents,
+                     }) => {
+    const [details, setDetails] = useState(null);
+
+    const [registered, setRegistered] = useState([]);
+    const [attended, setAttended] = useState([]);
+    const [absent, setAbsent] = useState([]);
+
+    const [uploadFile, setUploadFile] = useState(null);
+
+    const reloadExamData = useCallback(() => {
+        if (!examId) return;
+
+        findById(examId).then((data) => {
+            if (data) setDetails(data);
+        });
+
+        getRegisteredStudents(examId).then((data) =>
+            setRegistered(data || [])
+        );
+        getAttendedStudents(examId).then((data) =>
+            setAttended(data || [])
+        );
+        getAbsentStudents(examId).then((data) =>
+            setAbsent(data || [])
+        );
+    }, [examId, findById, getRegisteredStudents, getAttendedStudents, getAbsentStudents]);
+
+    useEffect(() => {
+        if (!open) return;
+        reloadExamData();
+    }, [open, reloadExamData]);
+
+    const handleExportHelper = (fn, defaultName) => {
+        fn(examId)
+            .then((response) => {
+                if (!response) return;
+                const blob = new Blob([response.data], {type: "text/csv"});
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = defaultName;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch((err) => console.error("Error exporting CSV", err));
+    };
+
+    const code =
+        details?.course?.courseCode ||
+        details?.courseCode ||
+        "exam";
+
+    const handleExportRegistered = () => {
+        handleExportHelper(
+            exportRegisteredStudents,
+            `exam_${code}_registeredStudents.csv`
+        );
+    };
+
+    const handleExportAttended = () => {
+        handleExportHelper(
+            exportAttendedStudents,
+            `exam_${code}_attendedStudents.csv`
+        );
+    };
+
+    const handleExportAbsent = () => {
+        handleExportHelper(
+            exportAbsentStudents,
+            `exam_${code}_absentStudents.csv`
+        );
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files?.[0];
+        setUploadFile(file || null);
+    };
+
+    const handleImportAttended = () => {
+        if (!uploadFile) return;
+
+        const formData = new FormData();
+        formData.append("file", uploadFile);
+
+        importAttendedStudents(examId, formData).then(() => {
+            setUploadFile(null);
+            reloadExamData();
+        });
+    };
+
+    const handleRegister = () => {
+        registerForExam(examId)
+            .then(() => {
+                reloadExamData();
+            })
+            .catch((err) => {
+                console.error("Failed to register for exam", err);
+            });
+    };
+
+    if (!details) {
+        return null;
+    }
+
+    const courseName =
+        details.course?.courseName || details.courseName || "Exam";
+    const date = details.dateOfExam || "";
+    const startTime = normalizeTime(details.startTime);
+    const endTime = normalizeTime(details.endTime);
+    const capacity = details.capacityOfStudents ?? "-";
+    const labs =
+        details.reservedLaboratories && details.reservedLaboratories.length > 0
+            ? details.reservedLaboratories.join(", ")
+            : "No labs reserved";
+
+    const formatStudentLabel = (s) =>
+        `${s.studentIndex} (${s.examStatus})`;
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="md"
+            fullWidth
+            className="exam-details-dialog"
+        >
+            <DialogTitle>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    justifyContent="space-between"
+                >
+                    <Box>
+                        <Typography variant="overline" gutterBottom>
+                            {code}
+                        </Typography>
+                        <Typography variant="h6" fontWeight={600}>
+                            {courseName}
+                        </Typography>
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                            sx={{mt: 0.5}}
+                        >
+                            <AccessTimeIcon fontSize="small"/>
+                            <Typography variant="body2">
+                                {date || "No date"}{" "}
+                                {startTime &&
+                                    `· ${startTime} - ${endTime || "?"}`}
+                            </Typography>
+                            <RoomOutlinedIcon fontSize="small"/>
+                            <Typography variant="body2">{labs}</Typography>
+                        </Stack>
+                    </Box>
+                    <Stack direction="row" spacing={1}>
+                        <Chip
+                            size="small"
+                            label={`Capacity: ${capacity}`}
+                            color="primary"
+                            variant="outlined"
+                        />
+                        <Button
+                            size="small"
+                            variant="contained"
+                            onClick={handleRegister}
+                        >
+                            Register for exam
+                        </Button>
+                    </Stack>
+                </Stack>
+            </DialogTitle>
+            <DialogContent dividers>
+                <Grid container spacing={3}>
+                    {/* CSV tools + counts */}
+                    <Grid item xs={12} md={6}>
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            Registrations & attendance
+                        </Typography>
+
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                            sx={{mb: 1}}
+                        >
+                            <PeopleAltOutlinedIcon fontSize="small"/>
+                            <Typography variant="body2">
+                                {registered.length} registered ·{" "}
+                                {attended.length} attended ·{" "}
+                                {absent.length} absent
+                            </Typography>
+                        </Stack>
+
+                        <Stack direction="row" spacing={1} sx={{mb: 1}}>
+                            <Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<DownloadIcon/>}
+                                onClick={handleExportRegistered}
+                            >
+                                Registered CSV
+                            </Button>
+
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                startIcon={<DownloadIcon/>}
+                                onClick={handleExportAttended}
+                            >
+                                Attended CSV
+                            </Button>
+
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                startIcon={<DownloadIcon/>}
+                                onClick={handleExportAbsent}
+                            >
+                                Absent CSV
+                            </Button>
+                        </Stack>
+
+                        <Divider sx={{my: 2}}/>
+
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            Import attended students
+                        </Typography>
+
+                        <Stack direction="row" spacing={1} sx={{mb: 1}}>
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                startIcon={<UploadIcon/>}
+                                onClick={handleImportAttended}
+                                disabled={!uploadFile}
+                            >
+                                Import attended CSV
+                            </Button>
+                        </Stack>
+
+                        <Button
+                            component="label"
+                            variant="text"
+                            size="small"
+                            sx={{p: 0}}
+                        >
+                            <Typography
+                                variant="body2"
+                                color="primary"
+                                sx={{textTransform: "none"}}
+                            >
+                                Choose CSV file…
+                            </Typography>
+                            <input
+                                type="file"
+                                accept=".csv"
+                                hidden
+                                onChange={handleFileChange}
+                            />
+                        </Button>
+                        {uploadFile && (
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{display: "block", mt: 0.3}}
+                            >
+                                Selected: {uploadFile.name}
+                            </Typography>
+                        )}
+                    </Grid>
+
+                    {/* Student lists */}
+                    <Grid item xs={12} md={6}>
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            Registered students
+                        </Typography>
+                        {registered.length ? (
+                            <Stack spacing={0.5} sx={{mb: 2}}>
+                                {registered.map((r) => (
+                                    <Stack
+                                        key={r.id}
+                                        direction="row"
+                                        spacing={1}
+                                        alignItems="center"
+                                    >
+                                        <PersonOutlineIcon fontSize="small"/>
+                                        <Typography variant="body2">
+                                            {formatStudentLabel(r)}
+                                        </Typography>
+                                    </Stack>
+                                ))}
+                            </Stack>
+                        ) : (
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{mb: 2}}
+                            >
+                                No registered students.
+                            </Typography>
+                        )}
+
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            Attended students
+                        </Typography>
+                        {attended.length ? (
+                            <Stack spacing={0.5} sx={{mb: 2}}>
+                                {attended.map((r) => (
+                                    <Stack
+                                        key={r.id}
+                                        direction="row"
+                                        spacing={1}
+                                        alignItems="center"
+                                    >
+                                        <PersonOutlineIcon fontSize="small"/>
+                                        <Typography variant="body2">
+                                            {formatStudentLabel(r)}
+                                        </Typography>
+                                    </Stack>
+                                ))}
+                            </Stack>
+                        ) : (
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{mb: 2}}
+                            >
+                                No attended students.
+                            </Typography>
+                        )}
+
+                        <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            Absent students
+                        </Typography>
+                        {absent.length ? (
+                            <Stack spacing={0.5}>
+                                {absent.map((r) => (
+                                    <Stack
+                                        key={r.id}
+                                        direction="row"
+                                        spacing={1}
+                                        alignItems="center"
+                                    >
+                                        <PersonOutlineIcon fontSize="small"/>
+                                        <Typography variant="body2">
+                                            {formatStudentLabel(r)}
+                                        </Typography>
+                                    </Stack>
+                                ))}
+                            </Stack>
+                        ) : (
+                            <Typography variant="body2" color="text.secondary">
+                                No absent students.
+                            </Typography>
+                        )}
+                    </Grid>
+                </Grid>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+export default ExamDetails;

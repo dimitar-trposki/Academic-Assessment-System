@@ -34,11 +34,15 @@ const useStudents = () => {
     const onAdd = useCallback((data) => {
         studentRepository
             .add(data)
-            .then(() => {
+            .then((response) => {
                 console.log("Successfully added a new student.");
                 fetchStudents();
+                return response.data;
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {
+                console.log(error);
+                throw error;
+            });
 
     }, [fetchStudents]);
 
@@ -52,11 +56,21 @@ const useStudents = () => {
             .catch((error) => console.log(error));
     }, [fetchStudents]);
 
-    const onDelete = useCallback((id) => {
+    const onDeleteWithUser = useCallback((id) => {
         studentRepository
-            .delete(id)
+            .deleteWithUser(id)
             .then(() => {
-                console.log(`Successfully deleted the student with ID ${id}`);
+                console.log(`Successfully deleted the student with ID ${id} with the associated user.`);
+                fetchStudents();
+            })
+            .catch((error) => console.log(error));
+    }, [fetchStudents]);
+
+    const onDeleteWithoutUser = useCallback((id) => {
+        studentRepository
+            .deleteWithoutUser(id)
+            .then(() => {
+                console.log(`Successfully deleted the student with ID ${id} without the associated user.`);
                 fetchStudents();
             })
             .catch((error) => console.log(error));
@@ -88,9 +102,11 @@ const useStudents = () => {
 
     return {
         ...state,
+        fetchStudents: fetchStudents,
         onAdd: onAdd,
         onEdit: onEdit,
-        onDelete: onDelete,
+        onDeleteWithUser: onDeleteWithUser,
+        onDeleteWithoutUser: onDeleteWithoutUser,
         findById: findById,
         findStudentExamRegistrationByStudentId: findStudentExamRegistrationByStudentId,
         findCourseEnrollmentByStudentId: findCourseEnrollmentByStudentId,

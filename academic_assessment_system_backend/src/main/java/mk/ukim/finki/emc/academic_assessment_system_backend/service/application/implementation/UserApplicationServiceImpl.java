@@ -5,11 +5,11 @@ import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.LoginUser
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.RegisterUserRequestDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.RegisterUserResponseDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateUserDto;
-import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayUserDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.*;
 import mk.ukim.finki.emc.academic_assessment_system_backend.helpers.JwtHelper;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Student;
 import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.User;
-import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.AcademicRole;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.enums.UserRole;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.UserApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.domain.UserService;
 import org.apache.commons.csv.CSVFormat;
@@ -47,6 +47,16 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     public List<DisplayUserDto> findAll() {
         return DisplayUserDto
                 .from(userService.findAll());
+    }
+
+    @Override
+    public List<DisplayUserDto> findAllStaff() {
+        return DisplayUserDto.from(userService.findAllByUserRole(UserRole.STAFF));
+    }
+
+    @Override
+    public List<DisplayUserStudentDto> findAllStudents() {
+        return DisplayUserStudentDto.from(userService.findAllByUserRole(UserRole.STUDENT));
     }
 
     @Override
@@ -125,7 +135,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
                         u.getLastName(),
                         u.getEmail(),
                         "",
-                        u.getAcademicRole().name(),
+                        u.getUserRole().name(),
                         studentIndex,
                         major
                 );
@@ -171,13 +181,13 @@ public class UserApplicationServiceImpl implements UserApplicationService {
                     String studentIndex = getOptional(r, "studentIndex");
                     String major = getOptional(r, "major");
 
-                    AcademicRole role = AcademicRole.valueOf(roleStr);
+                    UserRole role = UserRole.valueOf(roleStr);
 
                     if (isBlank(firstName) || isBlank(lastName) || isBlank(email)) {
                         throw new IllegalArgumentException("firstName/lastName/email are required");
                     }
 
-                    boolean isStudent = role == AcademicRole.STUDENT;
+                    boolean isStudent = role == UserRole.STUDENT;
 
                     if (isStudent) {
                         if (isBlank(studentIndex) || isBlank(major)) {
@@ -196,7 +206,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
                         u.setFirstName(firstName);
                         u.setLastName(lastName);
                         u.setEmail(email);
-                        u.setAcademicRole(role);
+                        u.setUserRole(role);
 
                         u.setPassword(passwordEncoder.encode(password));
 
@@ -214,7 +224,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
                         User u = existingOpt.get();
                         u.setFirstName(firstName);
                         u.setLastName(lastName);
-                        u.setAcademicRole(role);
+                        u.setUserRole(role);
 
                         if (!isBlank(password)) {
                             u.setPassword(passwordEncoder.encode(password));
@@ -254,6 +264,11 @@ public class UserApplicationServiceImpl implements UserApplicationService {
                 "updated", updated,
                 "errors", errors
         );
+    }
+
+    @Override
+    public DisplayMyProfileDto myProfile(Long userId) {
+        return null;
     }
 
     private static String getOptional(CSVRecord r, String col) {

@@ -112,11 +112,11 @@ public class JwtFilter extends OncePerRequestFilter {
         JwtUserPrincipal principal = new JwtUserPrincipal(
                 user.getId(),
                 user.getEmail(),
-                user.getAcademicRole()
+                user.getUserRole()
         );
 
         List<SimpleGrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_" + user.getAcademicRole().name())
+                new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name())
         );
 
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);

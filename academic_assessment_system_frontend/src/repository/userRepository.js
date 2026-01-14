@@ -19,17 +19,21 @@ const userRepository = {
     me: async () => {
         return await axiosInstance.get(`/users/me`);
     },
-    register: async () => {
-        return await axiosInstance.get(`/users/register`);
+    register: async (data) => {
+        return await axiosInstance.post(`/users/register`, data);
     },
-    login: async () => {
-        return await axiosInstance.get(`/users/login`);
+    login: async (data) => {
+        return await axiosInstance.post(`/users/login`, data);
     },
-    importUsers: async (data) => {
-        return await axiosInstance.post(`/users/import`, data);
+    importUsers: async (formData) => {
+        return await axiosInstance.post("/users/import", formData, {
+            headers: {"Content-Type": "multipart/form-data"},
+        });
     },
     exportUsers: async () => {
-        return await axiosInstance.get(`/users/export`);
+        return await axiosInstance.get("/users/export", {
+            responseType: "blob",
+        });
     },
     requestPasswordReset: async (data) => {
         return await axiosInstance.post(`/users/password-reset/request`, data);

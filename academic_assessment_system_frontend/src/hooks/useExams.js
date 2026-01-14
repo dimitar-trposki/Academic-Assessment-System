@@ -6,7 +6,7 @@ const initialState = {
     "loading": true,
 };
 
-const useCourses = () => {
+const useExams = () => {
     const [state, setState] = useState(initialState);
 
     const fetchExams = useCallback(() => {
@@ -62,86 +62,6 @@ const useCourses = () => {
             .catch((error) => console.log(error));
     }, [fetchExams]);
 
-    const registerForExam = useCallback((id, data) => {
-        return examRepository
-            .registerForExam(id, data)
-            .then(() => {
-                console.log(`Registered student for exam ${id}`);
-                fetchExams();
-            })
-            .catch((error) => console.log(error));
-    }, [fetchExams]);
-
-    const exportRegisteredStudents = useCallback((id) => {
-        return examRepository
-            .exportRegisteredStudents(id)
-            .then((response) => {
-                console.log(`Exported registered students for exam ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const importAttendedStudents = useCallback((id, data) => {
-        return examRepository
-            .importAttendedStudents(id, data)
-            .then(() => {
-                console.log(`Imported attended students for exam ${id}`);
-                fetchExams();
-            })
-            .catch((error) => console.log(error));
-    }, [fetchExams]);
-
-    const exportAttendedStudents = useCallback((id) => {
-        return examRepository
-            .exportAttendedStudents(id)
-            .then((response) => {
-                console.log(`Exported attended students for exam ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const exportAbsentStudents = useCallback((id) => {
-        return examRepository
-            .exportAbsentStudents(id)
-            .then((response) => {
-                console.log(`Exported absent students for exam ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const getRegisteredStudents = useCallback((id) => {
-        return examRepository
-            .getRegisteredStudents(id)
-            .then((response) => {
-                console.log(`Registered students for exam ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const getAttendedStudents = useCallback((id) => {
-        return examRepository
-            .getAttendedStudents(id)
-            .then((response) => {
-                console.log(`Attended students for exam ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
-    const getAbsentStudents = useCallback((id) => {
-        return examRepository
-            .getAbsentStudents(id)
-            .then((response) => {
-                console.log(`Absent students for exam ${id}`);
-                return response;
-            })
-            .catch((error) => console.log(error));
-    }, []);
-
     useEffect(() => {
         fetchExams();
     }, [fetchExams]);
@@ -152,15 +72,7 @@ const useCourses = () => {
         onEdit: onEdit,
         onDelete: onDelete,
         findById: findById,
-        registerForExam: registerForExam,
-        exportRegisteredStudents: exportRegisteredStudents,
-        importAttendedStudents: importAttendedStudents,
-        exportAttendedStudents: exportAttendedStudents,
-        exportAbsentStudents: exportAbsentStudents,
-        getRegisteredStudents: getRegisteredStudents,
-        getAttendedStudents: getAttendedStudents,
-        getAbsentStudents: getAbsentStudents,
     };
 };
 
-export default useCourses;
+export default useExams;
