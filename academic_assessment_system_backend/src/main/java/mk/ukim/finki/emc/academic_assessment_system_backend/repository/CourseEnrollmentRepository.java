@@ -23,6 +23,6 @@ public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollme
             """)
     List<CourseEnrollment> findAllByCourseIdWithStudentAndUser(@Param("courseId") Long courseId);
 
-    List<CourseEnrollment> findAllByStudent_Id(Long studentId);
+    List<CourseEnrollment> findAllByStudentId(Long studentId);
 
 }

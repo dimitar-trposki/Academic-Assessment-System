@@ -4,6 +4,12 @@ const userRepository = {
     findAll: async () => {
         return await axiosInstance.get("/users");
     },
+    findAllStaff: async () => {
+        return await axiosInstance.get("/users/staff");
+    },
+    findAllStudents: async () => {
+        return await axiosInstance.get("/users/students");
+    },
     findById: async (id) => {
         return await axiosInstance.get(`/users/${id}`);
     },
@@ -40,6 +46,9 @@ const userRepository = {
     },
     confirmPasswordReset: async (data) => {
         return await axiosInstance.post(`/users/password-reset/confirm`, data);
+    },
+    findCoursesByUserId: async (id) => {
+        return await axiosInstance.get(`/users/${id}/assigned-courses`);
     },
 };
 

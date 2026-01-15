@@ -21,6 +21,13 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
+import useUsers from "../../../../hooks/useUsers.js";
+
+const ROLE_ADMIN = "ADMINISTRATOR";
+const ROLE_STAFF = "STAFF";
+const ROLE_STUDENT = "STUDENT";
+const ROLE_USER = "USER";
+
 const normalizeTime = (t) => {
     if (!t) return "";
     return t.substring(0, 5);
@@ -48,6 +55,9 @@ const ExamDetails = ({
 
     const [uploadFile, setUploadFile] = useState(null);
 
+    const {me} = useUsers();
+    const [role, setRole] = useState(null);
+
     const reloadExamData = useCallback(() => {
         if (!examId) return;
 
@@ -68,8 +78,23 @@ const ExamDetails = ({
 
     useEffect(() => {
         if (!open) return;
+
         reloadExamData();
-    }, [open, reloadExamData]);
+
+        me()
+            .then((user) => {
+                setRole(user?.role || null);
+            })
+            .catch((err) => {
+                console.log(err);
+                setRole(null);
+            });
+    }, [open, reloadExamData, me]);
+
+    const isAdmin = role === ROLE_ADMIN;
+    const isStaff = role === ROLE_STAFF;
+    const isStudent = role === ROLE_STUDENT;
+    const isUser = role === ROLE_USER;
 
     const handleExportHelper = (fn, defaultName) => {
         fn(examId)
@@ -132,6 +157,7 @@ const ExamDetails = ({
     };
 
     const handleRegister = () => {
+        if (!isStudent) return;
         registerForExam(examId)
             .then(() => {
                 reloadExamData();
@@ -208,6 +234,7 @@ const ExamDetails = ({
                             size="small"
                             variant="contained"
                             onClick={handleRegister}
+                            disabled={!isStudent}
                         >
                             Register for exam
                         </Button>
@@ -215,211 +242,226 @@ const ExamDetails = ({
                 </Stack>
             </DialogTitle>
             <DialogContent dividers>
-                <Grid container spacing={3}>
-                    {/* CSV tools + counts */}
-                    <Grid item xs={12} md={6}>
-                        <Typography
-                            variant="subtitle2"
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            Registrations & attendance
-                        </Typography>
+                {isAdmin || isStaff || isStudent ? (
+                    <Grid container spacing={3}>
+                        {(isAdmin || isStaff) && (
+                            <Grid item xs={12} md={6}>
+                                <Typography
+                                    variant="subtitle2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    Registrations & attendance
+                                </Typography>
 
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            sx={{mb: 1}}
-                        >
-                            <PeopleAltOutlinedIcon fontSize="small"/>
-                            <Typography variant="body2">
-                                {registered.length} registered ·{" "}
-                                {attended.length} attended ·{" "}
-                                {absent.length} absent
-                            </Typography>
-                        </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    alignItems="center"
+                                    sx={{mb: 1}}
+                                >
+                                    <PeopleAltOutlinedIcon fontSize="small"/>
+                                    <Typography variant="body2">
+                                        {registered.length} registered ·{" "}
+                                        {attended.length} attended ·{" "}
+                                        {absent.length} absent
+                                    </Typography>
+                                </Stack>
 
-                        <Stack direction="row" spacing={1} sx={{mb: 1}}>
-                            <Button
-                                size="small"
-                                variant="contained"
-                                startIcon={<DownloadIcon/>}
-                                onClick={handleExportRegistered}
+                                <Stack direction="row" spacing={1} sx={{mb: 1}}>
+                                    <Button
+                                        size="small"
+                                        variant="contained"
+                                        startIcon={<DownloadIcon/>}
+                                        onClick={handleExportRegistered}
+                                    >
+                                        Registered CSV
+                                    </Button>
+
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<DownloadIcon/>}
+                                        onClick={handleExportAttended}
+                                    >
+                                        Attended CSV
+                                    </Button>
+
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<DownloadIcon/>}
+                                        onClick={handleExportAbsent}
+                                    >
+                                        Absent CSV
+                                    </Button>
+                                </Stack>
+
+                                <Divider sx={{my: 2}}/>
+
+                                <Typography
+                                    variant="subtitle2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    Import attended students
+                                </Typography>
+
+                                <Stack direction="row" spacing={1} sx={{mb: 1}}>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<UploadIcon/>}
+                                        onClick={handleImportAttended}
+                                        disabled={!uploadFile}
+                                    >
+                                        Import attended CSV
+                                    </Button>
+                                </Stack>
+
+                                <Button
+                                    component="label"
+                                    variant="text"
+                                    size="small"
+                                    sx={{p: 0}}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        color="primary"
+                                        sx={{textTransform: "none"}}
+                                    >
+                                        Choose CSV file…
+                                    </Typography>
+                                    <input
+                                        type="file"
+                                        accept=".csv"
+                                        hidden
+                                        onChange={handleFileChange}
+                                    />
+                                </Button>
+                                {uploadFile && (
+                                    <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                        sx={{display: "block", mt: 0.3}}
+                                    >
+                                        Selected: {uploadFile.name}
+                                    </Typography>
+                                )}
+                            </Grid>
+                        )}
+
+                        {(isAdmin || isStaff || isStudent) && (
+                            <Grid
+                                item
+                                xs={12}
+                                md={isAdmin || isStaff ? 6 : 12}
                             >
-                                Registered CSV
-                            </Button>
+                                <Typography
+                                    variant="subtitle2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    Registered students
+                                </Typography>
+                                {registered.length ? (
+                                    <Stack spacing={0.5} sx={{mb: 2}}>
+                                        {registered.map((r) => (
+                                            <Stack
+                                                key={r.id}
+                                                direction="row"
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
+                                                <PersonOutlineIcon fontSize="small"/>
+                                                <Typography variant="body2">
+                                                    {formatStudentLabel(r)}
+                                                </Typography>
+                                            </Stack>
+                                        ))}
+                                    </Stack>
+                                ) : (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{mb: 2}}
+                                    >
+                                        No registered students.
+                                    </Typography>
+                                )}
 
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<DownloadIcon/>}
-                                onClick={handleExportAttended}
-                            >
-                                Attended CSV
-                            </Button>
+                                <Typography
+                                    variant="subtitle2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    Attended students
+                                </Typography>
+                                {attended.length ? (
+                                    <Stack spacing={0.5} sx={{mb: 2}}>
+                                        {attended.map((r) => (
+                                            <Stack
+                                                key={r.id}
+                                                direction="row"
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
+                                                <PersonOutlineIcon fontSize="small"/>
+                                                <Typography variant="body2">
+                                                    {formatStudentLabel(r)}
+                                                </Typography>
+                                            </Stack>
+                                        ))}
+                                    </Stack>
+                                ) : (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{mb: 2}}
+                                    >
+                                        No attended students.
+                                    </Typography>
+                                )}
 
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<DownloadIcon/>}
-                                onClick={handleExportAbsent}
-                            >
-                                Absent CSV
-                            </Button>
-                        </Stack>
-
-                        <Divider sx={{my: 2}}/>
-
-                        <Typography
-                            variant="subtitle2"
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            Import attended students
-                        </Typography>
-
-                        <Stack direction="row" spacing={1} sx={{mb: 1}}>
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<UploadIcon/>}
-                                onClick={handleImportAttended}
-                                disabled={!uploadFile}
-                            >
-                                Import attended CSV
-                            </Button>
-                        </Stack>
-
-                        <Button
-                            component="label"
-                            variant="text"
-                            size="small"
-                            sx={{p: 0}}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                                sx={{textTransform: "none"}}
-                            >
-                                Choose CSV file…
-                            </Typography>
-                            <input
-                                type="file"
-                                accept=".csv"
-                                hidden
-                                onChange={handleFileChange}
-                            />
-                        </Button>
-                        {uploadFile && (
-                            <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{display: "block", mt: 0.3}}
-                            >
-                                Selected: {uploadFile.name}
-                            </Typography>
+                                <Typography
+                                    variant="subtitle2"
+                                    color="text.secondary"
+                                    gutterBottom
+                                >
+                                    Absent students
+                                </Typography>
+                                {absent.length ? (
+                                    <Stack spacing={0.5}>
+                                        {absent.map((r) => (
+                                            <Stack
+                                                key={r.id}
+                                                direction="row"
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
+                                                <PersonOutlineIcon fontSize="small"/>
+                                                <Typography variant="body2">
+                                                    {formatStudentLabel(r)}
+                                                </Typography>
+                                            </Stack>
+                                        ))}
+                                    </Stack>
+                                ) : (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        No absent students.
+                                    </Typography>
+                                )}
+                            </Grid>
                         )}
                     </Grid>
-
-                    {/* Student lists */}
-                    <Grid item xs={12} md={6}>
-                        <Typography
-                            variant="subtitle2"
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            Registered students
-                        </Typography>
-                        {registered.length ? (
-                            <Stack spacing={0.5} sx={{mb: 2}}>
-                                {registered.map((r) => (
-                                    <Stack
-                                        key={r.id}
-                                        direction="row"
-                                        spacing={1}
-                                        alignItems="center"
-                                    >
-                                        <PersonOutlineIcon fontSize="small"/>
-                                        <Typography variant="body2">
-                                            {formatStudentLabel(r)}
-                                        </Typography>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                        ) : (
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{mb: 2}}
-                            >
-                                No registered students.
-                            </Typography>
-                        )}
-
-                        <Typography
-                            variant="subtitle2"
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            Attended students
-                        </Typography>
-                        {attended.length ? (
-                            <Stack spacing={0.5} sx={{mb: 2}}>
-                                {attended.map((r) => (
-                                    <Stack
-                                        key={r.id}
-                                        direction="row"
-                                        spacing={1}
-                                        alignItems="center"
-                                    >
-                                        <PersonOutlineIcon fontSize="small"/>
-                                        <Typography variant="body2">
-                                            {formatStudentLabel(r)}
-                                        </Typography>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                        ) : (
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{mb: 2}}
-                            >
-                                No attended students.
-                            </Typography>
-                        )}
-
-                        <Typography
-                            variant="subtitle2"
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            Absent students
-                        </Typography>
-                        {absent.length ? (
-                            <Stack spacing={0.5}>
-                                {absent.map((r) => (
-                                    <Stack
-                                        key={r.id}
-                                        direction="row"
-                                        spacing={1}
-                                        alignItems="center"
-                                    >
-                                        <PersonOutlineIcon fontSize="small"/>
-                                        <Typography variant="body2">
-                                            {formatStudentLabel(r)}
-                                        </Typography>
-                                    </Stack>
-                                ))}
-                            </Stack>
-                        ) : (
-                            <Typography variant="body2" color="text.secondary">
-                                No absent students.
-                            </Typography>
-                        )}
-                    </Grid>
-                </Grid>
+                ) : (
+                    <Typography variant="body2" color="text.secondary">
+                        No additional exam data available for your role.
+                    </Typography>
+                )}
             </DialogContent>
         </Dialog>
     );

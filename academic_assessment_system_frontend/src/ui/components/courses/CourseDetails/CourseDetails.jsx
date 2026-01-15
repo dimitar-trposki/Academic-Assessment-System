@@ -20,6 +20,13 @@ import DownloadIcon from "@mui/icons-material/Download";
 import UploadIcon from "@mui/icons-material/Upload";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
+import useUsers from "../../../../hooks/useUsers.js";
+
+const ROLE_ADMIN = "ADMINISTRATOR";
+const ROLE_STAFF = "STAFF";
+const ROLE_STUDENT = "STUDENT";
+const ROLE_USER = "USER";
+
 const CourseDetails = ({
                            open,
                            onClose,
@@ -33,6 +40,15 @@ const CourseDetails = ({
     const [students, setStudents] = useState([]);
     const [uploadFile, setUploadFile] = useState(null);
 
+    const {me} = useUsers();
+    const [role, setRole] = useState(null);
+
+    const isAdmin = role === ROLE_ADMIN;
+    const isStaff = role === ROLE_STAFF;
+    // студент и user можат да гледаат, ама немаат import/export
+    // const isStudent = role === ROLE_STUDENT;
+    // const isUser = role === ROLE_USER;
+
     useEffect(() => {
         if (!open || !courseId) return;
 
@@ -43,7 +59,16 @@ const CourseDetails = ({
         getEnrolledStudents(courseId).then((res) => {
             setStudents(res?.data || res || []);
         });
-    }, [open, courseId, findById, getEnrolledStudents]);
+
+        me()
+            .then((user) => {
+                setRole(user?.role || null);
+            })
+            .catch((err) => {
+                console.log(err);
+                setRole(null);
+            });
+    }, [open, courseId, findById, getEnrolledStudents, me]);
 
     const handleExportCsv = () => {
         exportEnrolledStudentsCsv(courseId)
@@ -80,7 +105,6 @@ const CourseDetails = ({
             console.log("Imported CSV for course", courseId);
             setUploadFile(null);
 
-            // reload students after import
             getEnrolledStudents(courseId).then((res) => {
                 setStudents(res?.data || res || []);
             });
@@ -184,55 +208,59 @@ const CourseDetails = ({
                             </Typography>
                         </Stack>
 
-                        <Stack direction="row" spacing={1} sx={{mb: 1}}>
-                            <Button
-                                size="small"
-                                variant="contained"
-                                startIcon={<DownloadIcon/>}
-                                onClick={handleExportCsv}
-                            >
-                                Export CSV
-                            </Button>
+                        {(isAdmin || isStaff) && (
+                            <>
+                                <Stack direction="row" spacing={1} sx={{mb: 1}}>
+                                    <Button
+                                        size="small"
+                                        variant="contained"
+                                        startIcon={<DownloadIcon/>}
+                                        onClick={handleExportCsv}
+                                    >
+                                        Export CSV
+                                    </Button>
 
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<UploadIcon/>}
-                                onClick={handleImportCsv}
-                                disabled={!uploadFile}
-                            >
-                                Import CSV
-                            </Button>
-                        </Stack>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<UploadIcon/>}
+                                        onClick={handleImportCsv}
+                                        disabled={!uploadFile}
+                                    >
+                                        Import CSV
+                                    </Button>
+                                </Stack>
 
-                        <Button
-                            component="label"
-                            variant="text"
-                            size="small"
-                            sx={{p: 0}}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                                sx={{textTransform: "none"}}
-                            >
-                                Choose CSV file…
-                            </Typography>
-                            <input
-                                type="file"
-                                accept=".csv"
-                                hidden
-                                onChange={handleFileChange}
-                            />
-                        </Button>
-                        {uploadFile && (
-                            <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{display: "block", mt: 0.3}}
-                            >
-                                Selected: {uploadFile.name}
-                            </Typography>
+                                <Button
+                                    component="label"
+                                    variant="text"
+                                    size="small"
+                                    sx={{p: 0}}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        color="primary"
+                                        sx={{textTransform: "none"}}
+                                    >
+                                        Choose CSV file…
+                                    </Typography>
+                                    <input
+                                        type="file"
+                                        accept=".csv"
+                                        hidden
+                                        onChange={handleFileChange}
+                                    />
+                                </Button>
+                                {uploadFile && (
+                                    <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                        sx={{display: "block", mt: 0.3}}
+                                    >
+                                        Selected: {uploadFile.name}
+                                    </Typography>
+                                )}
+                            </>
                         )}
                     </Grid>
 

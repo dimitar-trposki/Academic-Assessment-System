@@ -2,8 +2,19 @@ package mk.ukim.finki.emc.academic_assessment_system_backend.web.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseEnrollmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseStaffAssignmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayStudentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.security.JwtUserPrincipal;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Course;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.CourseEnrollment;
+import mk.ukim.finki.emc.academic_assessment_system_backend.model.domain.Student;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseEnrollmentApplicationService;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseStaffAssignmentApplicationService;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentApplicationService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +29,10 @@ import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.Cr
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseApplicationService;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/courses", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,6 +46,9 @@ import java.util.List;
 public class CourseController {
 
     private final CourseApplicationService courseApplicationService;
+    private final CourseStaffAssignmentApplicationService courseStaffAssignmentApplicationService;
+    private final CourseEnrollmentApplicationService courseEnrollmentApplicationService;
+    private final StudentApplicationService studentApplicationService;
 
     @Operation(
             summary = "Get all courses",
@@ -49,7 +66,13 @@ public class CourseController {
     })
     @GetMapping
     public ResponseEntity<List<DisplayCourseDto>> findAll() {
-        return ResponseEntity.ok(courseApplicationService.findAll());
+        return ResponseEntity.ok(
+                courseApplicationService.findAll().stream()
+                        .sorted(Comparator.comparing(DisplayCourseDto::academicYear).reversed()
+                                .thenComparing(Comparator.comparing(DisplayCourseDto::semester).reversed()
+                                        .thenComparing(DisplayCourseDto::courseCode)))
+                        .toList()
+        );
     }
 
     @Operation(
@@ -160,6 +183,43 @@ public class CourseController {
                 .deleteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/find-by-staffId")
+    public ResponseEntity<List<DisplayCourseDto>> findAllForStaff(Authentication authentication) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) authentication.getPrincipal();
+        List<Long> courseIdsByStaffId = courseStaffAssignmentApplicationService
+                .findCourseStaffAssignmentByUserId(principal.id())
+                .stream().map(DisplayCourseStaffAssignmentDto::courseId)
+                .toList();
+        List<DisplayCourseDto> coursesByStaffId = courseIdsByStaffId.stream()
+                .map(courseApplicationService::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .sorted(Comparator.comparing(DisplayCourseDto::academicYear).reversed()
+                        .thenComparing(DisplayCourseDto::semester).reversed()
+                        .thenComparing(DisplayCourseDto::courseCode))
+                .toList();
+        return ResponseEntity.ok(coursesByStaffId);
+    }
+
+    @GetMapping("/find-by-studentId")
+    public ResponseEntity<List<DisplayCourseDto>> findAllForStudent(Authentication authentication) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) authentication.getPrincipal();
+        Optional<DisplayStudentDto> studentDto = studentApplicationService.findStudentByUserId(principal.id());
+        List<Long> courseIdsByStudentId = courseEnrollmentApplicationService
+                .findAllByStudentId(studentDto.get().id())
+                .stream().map(DisplayCourseEnrollmentDto::courseId)
+                .toList();
+        List<DisplayCourseDto> coursesByStudentId = courseIdsByStudentId.stream()
+                .map(courseApplicationService::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .sorted(Comparator.comparing(DisplayCourseDto::academicYear).reversed()
+                        .thenComparing(DisplayCourseDto::semester).reversed()
+                        .thenComparing(DisplayCourseDto::courseCode))
+                .toList();
+        return ResponseEntity.ok(coursesByStudentId);
     }
 
 }

@@ -19,7 +19,15 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
-const CourseCard = ({course, onOpenDetails, onEdit, onDelete}) => {
+const CourseCard = ({
+                        course,
+                        onOpenDetails,
+                        onEdit,
+                        onDelete,
+                        showDetails = true,
+                        showEdit = true,
+                        showDelete = true,
+                    }) => {
     const name = course.courseName;
     const code = course.courseCode;
     const semester = course.semester;
@@ -27,6 +35,8 @@ const CourseCard = ({course, onOpenDetails, onEdit, onDelete}) => {
 
     const profCount = course.professors?.length ?? 0;
     const asstCount = course.assistants?.length ?? 0;
+
+    const showAnyActions = showDetails || showEdit || showDelete;
 
     return (
         <Card className="course-card-root" elevation={2}>
@@ -58,30 +68,43 @@ const CourseCard = ({course, onOpenDetails, onEdit, onDelete}) => {
                     </Stack>
 
                     <Stack spacing={0.5} alignItems="flex-end">
-                        <Stack direction="row" spacing={0.5}>
-                            <Tooltip title="Details">
-                                <IconButton
-                                    size="small"
-                                    onClick={onOpenDetails}
-                                >
-                                    <InfoOutlinedIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Edit course">
-                                <IconButton size="small" onClick={onEdit}>
-                                    <EditIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete course">
-                                <IconButton
-                                    size="small"
-                                    color="error"
-                                    onClick={onDelete}
-                                >
-                                    <DeleteOutlineIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                        </Stack>
+                        {showAnyActions && (
+                            <Stack direction="row" spacing={0.5}>
+                                {showDetails && onOpenDetails && (
+                                    <Tooltip title="Details">
+                                        <IconButton
+                                            size="small"
+                                            onClick={onOpenDetails}
+                                        >
+                                            <InfoOutlinedIcon fontSize="small"/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+
+                                {showEdit && onEdit && (
+                                    <Tooltip title="Edit course">
+                                        <IconButton
+                                            size="small"
+                                            onClick={onEdit}
+                                        >
+                                            <EditIcon fontSize="small"/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+
+                                {showDelete && onDelete && (
+                                    <Tooltip title="Delete course">
+                                        <IconButton
+                                            size="small"
+                                            color="error"
+                                            onClick={onDelete}
+                                        >
+                                            <DeleteOutlineIcon fontSize="small"/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                            </Stack>
+                        )}
 
                         <Chip
                             size="small"

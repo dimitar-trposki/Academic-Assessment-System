@@ -9,15 +9,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateExamDto;
-import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayExamDto;
-import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.ExamApplicationService;
-import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.StudentExamRegistrationApplicationService;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.*;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.security.JwtUserPrincipal;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(
@@ -35,6 +38,9 @@ public class ExamController {
 
     private final ExamApplicationService examApplicationService;
     private final StudentExamRegistrationApplicationService studentExamRegistrationApplicationService;
+    private final CourseStaffAssignmentApplicationService courseStaffAssignmentApplicationService;
+    private final StudentApplicationService studentApplicationService;
+    private final CourseEnrollmentApplicationService courseEnrollmentApplicationService;
 
     @Operation(
             summary = "Get all exams",
@@ -52,7 +58,10 @@ public class ExamController {
     })
     @GetMapping
     public ResponseEntity<List<DisplayExamDto>> findAll() {
-        return ResponseEntity.ok(examApplicationService.findAll());
+        return ResponseEntity.ok(examApplicationService.findAll().stream()
+                .sorted(Comparator.comparing(DisplayExamDto::dateOfExam).reversed()
+                        .thenComparing(DisplayExamDto::startTime))
+                .toList());
     }
 
     @Operation(
@@ -163,6 +172,48 @@ public class ExamController {
                 .deleteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/find-by-staffId")
+    public ResponseEntity<List<DisplayExamDto>> findAllExamsForStaff(Authentication authentication) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) authentication.getPrincipal();
+
+        List<Long> courseIdsByStaffId = courseStaffAssignmentApplicationService
+                .findCourseStaffAssignmentByUserId(principal.id())
+                .stream()
+                .map(DisplayCourseStaffAssignmentDto::courseId)
+                .toList();
+
+        List<DisplayExamDto> examsByStaffId = courseIdsByStaffId.stream()
+                .flatMap(courseId -> examApplicationService
+                        .findAllByCourseId(courseId)
+                        .stream()
+                        .sorted(Comparator.comparing(DisplayExamDto::dateOfExam).reversed()
+                                .thenComparing(DisplayExamDto::startTime)))
+                .toList();
+
+        return ResponseEntity.ok(examsByStaffId);
+    }
+
+    @GetMapping("/find-by-studentId")
+    public ResponseEntity<List<DisplayExamDto>> findAllExamsForStudent(Authentication authentication) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) authentication.getPrincipal();
+        Optional<DisplayStudentDto> studentDto = studentApplicationService.findStudentByUserId(principal.id());
+        List<Long> courseIdsByStudentId = courseEnrollmentApplicationService
+                .findAllByStudentId(studentDto.get().id())
+                .stream()
+                .map(DisplayCourseEnrollmentDto::courseId)
+                .toList();
+
+        List<DisplayExamDto> examsByStudentId = courseIdsByStudentId.stream()
+                .flatMap(courseId -> examApplicationService
+                        .findAllByCourseId(courseId)
+                        .stream()
+                        .sorted(Comparator.comparing(DisplayExamDto::dateOfExam).reversed()
+                                .thenComparing(DisplayExamDto::startTime)))
+                .toList();
+
+        return ResponseEntity.ok(examsByStudentId);
     }
 
 }

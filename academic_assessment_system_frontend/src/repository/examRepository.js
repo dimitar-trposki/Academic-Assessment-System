@@ -16,6 +16,12 @@ const examRepository = {
     delete: async (id) => {
         return await axiosInstance.delete(`/exams/${id}/delete`);
     },
+    findAllExamsForStaff: async () => {
+        return await axiosInstance.get(`/exams/find-by-staffId`);
+    },
+    findAllExamsForStudent: async () => {
+        return await axiosInstance.get(`/exams/find-by-studentId`);
+    },
 };
 
 export default examRepository;

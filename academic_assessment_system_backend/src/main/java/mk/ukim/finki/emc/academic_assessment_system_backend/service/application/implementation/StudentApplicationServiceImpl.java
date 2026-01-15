@@ -78,4 +78,11 @@ public class StudentApplicationServiceImpl implements StudentApplicationService 
                 .map(DisplayStudentDto::from);
     }
 
+    @Override
+    public Optional<DisplayStudentDto> findStudentByUserId(Long userId) {
+        return studentService
+                .findStudentByUserId(userId)
+                .map(DisplayStudentDto::from);
+    }
+
 }

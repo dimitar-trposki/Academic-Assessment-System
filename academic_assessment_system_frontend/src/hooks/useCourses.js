@@ -62,6 +62,32 @@ const useCourses = () => {
             .catch((error) => console.log(error));
     }, [fetchCourses]);
 
+    const findAllForStaff = useCallback(() => {
+        return courseRepository
+            .findAllForStaff()
+            .then((response) => {
+                console.log("Fetched courses for current staff user.");
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+                throw error;
+            });
+    }, []);
+
+    const findAllForStudent = useCallback(() => {
+        return courseRepository
+            .findAllForStudent()
+            .then((response) => {
+                console.log("Fetched courses for current student user.");
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+                throw error;
+            });
+    }, []);
+
     useEffect(() => {
         fetchCourses();
     }, [fetchCourses]);
@@ -72,6 +98,8 @@ const useCourses = () => {
         onEdit: onEdit,
         onDelete: onDelete,
         findById: findById,
+        findAllForStaff: findAllForStaff,
+        findAllForStudent: findAllForStudent,
     };
 };
 

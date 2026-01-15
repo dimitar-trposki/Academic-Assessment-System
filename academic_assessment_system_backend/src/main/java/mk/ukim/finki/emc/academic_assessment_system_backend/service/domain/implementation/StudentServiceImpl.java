@@ -67,4 +67,9 @@ public class StudentServiceImpl implements StudentService {
     public Optional<Student> findByStudentIndex(String studentIndex) {
         return studentRepository.findByStudentIndex(studentIndex);
     }
+
+    @Override
+    public Optional<Student> findStudentByUserId(Long userId) {
+        return studentRepository.findStudentByUserId(userId);
+    }
 }

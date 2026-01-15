@@ -14,9 +14,12 @@ import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.LoginUser
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.RegisterUserRequestDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.RegisterUserResponseDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.create.CreateUserDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseEnrollmentDto;
+import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayCourseStaffAssignmentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayUserDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.domain.display.DisplayUserStudentDto;
 import mk.ukim.finki.emc.academic_assessment_system_backend.dto.security.JwtUserPrincipal;
+import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.CourseStaffAssignmentApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.PasswordResetApplicationService;
 import mk.ukim.finki.emc.academic_assessment_system_backend.service.application.UserApplicationService;
 import org.springframework.core.io.ByteArrayResource;
@@ -46,6 +49,7 @@ public class UserController {
 
     private final UserApplicationService userApplicationService;
     private final PasswordResetApplicationService passwordResetApplicationService;
+    private final CourseStaffAssignmentApplicationService courseStaffAssignmentApplicationService;
 
     @Operation(
             summary = "Get all users",
@@ -441,6 +445,30 @@ public class UserController {
                 .deleteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Get assigned courses for staff",
+            description = "Returns a list of all assigned courses for the user with the given ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved staff assignments",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DisplayCourseEnrollmentDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}/assigned-courses")
+    public ResponseEntity<List<DisplayCourseStaffAssignmentDto>> findCoursesByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(courseStaffAssignmentApplicationService.findCourseStaffAssignmentByUserId(id));
     }
 
 //    @GetMapping("/me")

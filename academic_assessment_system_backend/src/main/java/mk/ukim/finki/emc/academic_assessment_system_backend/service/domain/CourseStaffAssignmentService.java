@@ -24,4 +24,6 @@ public interface CourseStaffAssignmentService {
 
     List<CourseStaffAssignment> findAllByCourseIdWithUser(Long courseId);
 
+    List<CourseStaffAssignment> findCourseStaffAssignmentByUserId(Long userId);
+
 }

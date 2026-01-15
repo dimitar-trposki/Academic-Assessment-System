@@ -12,7 +12,11 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    InputAdornment,
+    IconButton,
 } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const EditStudentDialog = ({open, onClose, student, onSave}) => {
     const [form, setForm] = useState({
@@ -21,16 +25,20 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
         firstName: "",
         lastName: "",
         userRole: "STUDENT",
+        password: "", // new password (optional)
     });
+
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (student) {
             setForm({
                 studentIndex: student.studentIndex ?? "",
-                major: student.major ?? "",
+                major: student.studentMajor ?? student.major ?? "",
                 firstName: student.studentFirstName ?? "",
                 lastName: student.studentLastName ?? "",
-                userRole: student.userRole ?? "STUDENT", // ако го имаш ова во DTO
+                userRole: student.userRole ?? "STUDENT", // ако го имаш во DTO
+                password: "",
             });
         }
     }, [student]);
@@ -50,15 +58,18 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
         const studentDto = {
             studentIndex: form.studentIndex,
             major: form.major,
-            userId: student.userId,  // веќе го имаш во DisplayStudentDto
+            userId: student.userId, // од DisplayUserStudentDto
         };
 
         const userDto = {
             firstName: form.firstName,
             lastName: form.lastName,
-            email: student.studentEmail,  // не го менуваме тука
+            email: student.studentEmail, // не го менуваме тука
             userRole: form.userRole,
-            password: null,
+            password:
+                form.password && form.password.trim().length > 0
+                    ? form.password
+                    : null, // ако е празно -> backend не менува password
         };
 
         onSave(student, studentDto, userDto);
@@ -110,6 +121,33 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
                                 <MenuItem value="USER">USER</MenuItem>
                             </Select>
                         </FormControl>
+
+                        <TextField
+                            label="New password (optional)"
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            fullWidth
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() =>
+                                                setShowPassword((prev) => !prev)
+                                            }
+                                            edge="end"
+                                        >
+                                            {showPassword ? (
+                                                <VisibilityOff/>
+                                            ) : (
+                                                <Visibility/>
+                                            )}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
 
                         <TextField
                             label="Student index"

@@ -65,4 +65,9 @@ public class CourseStaffAssignmentServiceImpl implements CourseStaffAssignmentSe
     public List<CourseStaffAssignment> findAllByCourseIdWithUser(Long courseId) {
         return courseStaffAssignmentRepository.findAllByCourseIdWithUser(courseId);
     }
+
+    @Override
+    public List<CourseStaffAssignment> findCourseStaffAssignmentByUserId(Long userId) {
+        return courseStaffAssignmentRepository.findCourseStaffAssignmentByUserId(userId);
+    }
 }

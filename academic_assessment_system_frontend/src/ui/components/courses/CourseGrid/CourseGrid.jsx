@@ -1,11 +1,10 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import "./CourseGrid.css";
 
 import {
     Box,
     CircularProgress,
     Fab,
-    Fade,
     Grid,
     IconButton,
     InputAdornment,
@@ -25,15 +24,34 @@ import EditCourseDialog from "../EditCourseDialog/EditCourseDialog.jsx";
 import DeleteCourseDialog from "../DeleteCourseDialog/DeleteCourseDialog.jsx";
 import CourseDetails from "../CourseDetails/CourseDetails.jsx";
 import useCourseEnrollments from "../../../../hooks/useCourseEnrollments.js";
+import useUsers from "../../../../hooks/useUsers.js";
+
+const ROLE_ADMIN = "ADMINISTRATOR";
+const ROLE_STAFF = "STAFF";
+const ROLE_STUDENT = "STUDENT";
+const ROLE_USER = "USER";
+
+const filterBySearch = (list, search) => {
+    const term = search.trim().toLowerCase();
+    if (!term) return list;
+
+    return list.filter((c) => {
+        const name = (c.courseName || "").toLowerCase();
+        const code = (c.courseCode || "").toLowerCase();
+        return name.includes(term) || code.includes(term);
+    });
+};
 
 const CourseGrid = () => {
     const {
         courses,
-        loading,
+        loading: coursesLoading,
         onAdd,
         onEdit,
         onDelete,
         findById,
+        findAllForStaff,
+        findAllForStudent,
     } = useCourses();
 
     const {
@@ -41,6 +59,8 @@ const CourseGrid = () => {
         importEnrolledStudentsCsv,
         getEnrolledStudents,
     } = useCourseEnrollments();
+
+    const {me} = useUsers();
 
     const [search, setSearch] = useState("");
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -50,16 +70,89 @@ const CourseGrid = () => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-    const filteredCourses = useMemo(() => {
-        const term = search.trim().toLowerCase();
-        if (!term) return courses;
+    const [role, setRole] = useState(null);
 
-        return courses.filter((c) => {
-            const name = (c.courseName || "").toLowerCase();
-            const code = (c.courseCode || "").toLowerCase();
-            return name.includes(term) || code.includes(term);
-        });
-    }, [courses, search]);
+    const [staffCourses, setStaffCourses] = useState([]);
+    const [studentCourses, setStudentCourses] = useState([]);
+
+    const [meLoading, setMeLoading] = useState(true);
+    const [staffLoading, setStaffLoading] = useState(false);
+    const [studentLoading, setStudentLoading] = useState(false);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const load = async () => {
+            try {
+                setMeLoading(true);
+                const user = await me();
+                if (!isMounted || !user) return;
+
+                const userRole = user.role;
+                setRole(userRole);
+
+                if (userRole === ROLE_STAFF) {
+                    setStaffLoading(true);
+                    try {
+                        const staff = await findAllForStaff();
+                        if (isMounted) {
+                            setStaffCourses(staff || []);
+                        }
+                    } finally {
+                        if (isMounted) setStaffLoading(false);
+                    }
+                } else if (userRole === ROLE_STUDENT) {
+                    setStudentLoading(true);
+                    try {
+                        const student = await findAllForStudent();
+                        if (isMounted) {
+                            setStudentCourses(student || []);
+                        }
+                    } finally {
+                        if (isMounted) setStudentLoading(false);
+                    }
+                } else {
+                    setStaffCourses([]);
+                    setStudentCourses([]);
+                }
+            } catch (e) {
+                console.log(e);
+                if (isMounted) {
+                    setRole(null);
+                    setStaffCourses([]);
+                    setStudentCourses([]);
+                }
+            } finally {
+                if (isMounted) setMeLoading(false);
+            }
+        };
+
+        load();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [me, findAllForStaff, findAllForStudent]);
+
+    const isAdmin = role === ROLE_ADMIN;
+    const isStaff = role === ROLE_STAFF;
+    const isStudent = role === ROLE_STUDENT;
+    const isUser = role === ROLE_USER;
+
+    const filteredAllCourses = useMemo(
+        () => filterBySearch(courses, search),
+        [courses, search]
+    );
+
+    const filteredStaffCourses = useMemo(
+        () => filterBySearch(staffCourses, search),
+        [staffCourses, search]
+    );
+
+    const filteredStudentCourses = useMemo(
+        () => filterBySearch(studentCourses, search),
+        [studentCourses, search]
+    );
 
     const handleOpenDetails = (course) => {
         setSelectedCourse(course);
@@ -84,9 +177,11 @@ const CourseGrid = () => {
         setSelectedCourse(null);
     };
 
+    const isAnyLoading =
+        coursesLoading || meLoading || staffLoading || studentLoading;
+
     return (
         <Box className="course-grid-root">
-            {/* Toolbar */}
             <Box className="course-grid-toolbar">
                 <TextField
                     size="small"
@@ -113,28 +208,29 @@ const CourseGrid = () => {
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Add new course">
-                        <Fab
-                            size="small"
-                            color="primary"
-                            className="course-grid-add-fab"
-                            onClick={() => setIsAddOpen(true)}
-                        >
-                            <AddIcon/>
-                        </Fab>
-                    </Tooltip>
+                    {(isAdmin || isStaff) && (
+                        <Tooltip title="Add new course">
+                            <Fab
+                                size="small"
+                                color="primary"
+                                className="course-grid-add-fab"
+                                onClick={() => setIsAddOpen(true)}
+                            >
+                                <AddIcon/>
+                            </Fab>
+                        </Tooltip>
+                    )}
                 </Box>
             </Box>
 
-            {/* Content */}
-            {loading ? (
+            {isAnyLoading ? (
                 <Box className="course-grid-loading">
                     <CircularProgress/>
                     <Typography variant="body2" sx={{mt: 1}}>
                         Loading courses...
                     </Typography>
                 </Box>
-            ) : filteredCourses.length === 0 ? (
+            ) : filteredAllCourses.length === 0 ? (
                 <Box className="course-grid-empty">
                     <Typography variant="h6" gutterBottom>
                         No courses found
@@ -146,40 +242,249 @@ const CourseGrid = () => {
                     >
                         Try a different search term or create a new course.
                     </Typography>
-                    <Fab
-                        variant="extended"
-                        color="primary"
-                        size="medium"
-                        onClick={() => setIsAddOpen(true)}
-                    >
-                        <AddIcon sx={{mr: 1}}/>
-                        Add course
-                    </Fab>
+                    {(isAdmin || isStaff) && (
+                        <Fab
+                            variant="extended"
+                            color="primary"
+                            size="medium"
+                            onClick={() => setIsAddOpen(true)}
+                        >
+                            <AddIcon sx={{mr: 1}}/>
+                            Add course
+                        </Fab>
+                    )}
                 </Box>
             ) : (
-                <Grid container spacing={3}>
-                    {filteredCourses.map((course) => (
-                        <Grid item xs={12} sm={6} md={4} key={course.id}>
-                            <Fade in timeout={400}>
-                                <div>
-                                    <CourseCard
-                                        course={course}
-                                        onOpenDetails={() =>
-                                            handleOpenDetails(course)
-                                        }
-                                        onEdit={() => handleOpenEdit(course)}
-                                        onDelete={() =>
-                                            handleOpenDelete(course)
-                                        }
-                                    />
-                                </div>
-                            </Fade>
-                        </Grid>
-                    ))}
-                </Grid>
+                <Box>
+                    {isStaff && (
+                        <>
+                            <Box mb={3}>
+                                <Typography variant="h6" gutterBottom>
+                                    My assigned courses
+                                </Typography>
+                                {filteredStaffCourses.length === 0 ? (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        You are not assigned to any course.
+                                    </Typography>
+                                ) : (
+                                    <Grid container spacing={3}>
+                                        {filteredStaffCourses.map((course) => (
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                key={`my-${course.id}`}
+                                            >
+                                                <CourseCard
+                                                    course={course}
+                                                    onOpenDetails={() =>
+                                                        handleOpenDetails(
+                                                            course
+                                                        )
+                                                    }
+                                                    onEdit={() =>
+                                                        handleOpenEdit(course)
+                                                    }
+                                                    onDelete={() =>
+                                                        handleOpenDelete(
+                                                            course
+                                                        )
+                                                    }
+                                                    showDetails={true}
+                                                    showEdit={true}
+                                                    showDelete={true}
+                                                />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                )}
+                            </Box>
+
+                            <Box>
+                                <Typography variant="h6" gutterBottom>
+                                    All courses
+                                </Typography>
+                                <Grid container spacing={3}>
+                                    {filteredAllCourses.map((course) => (
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            sm={6}
+                                            md={4}
+                                            key={course.id}
+                                        >
+                                            <CourseCard
+                                                course={course}
+                                                showDetails={false}
+                                                showEdit={false}
+                                                showDelete={false}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </Box>
+                        </>
+                    )}
+
+                    {isStudent && (
+                        <>
+                            <Box mb={3}>
+                                <Typography variant="h6" gutterBottom>
+                                    My enrolled courses
+                                </Typography>
+                                {filteredStudentCourses.length === 0 ? (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        You are not enrolled in any course.
+                                    </Typography>
+                                ) : (
+                                    <Grid container spacing={3}>
+                                        {filteredStudentCourses.map((course) => (
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                key={`my-${course.id}`}
+                                            >
+                                                <CourseCard
+                                                    course={course}
+                                                    onOpenDetails={() =>
+                                                        handleOpenDetails(
+                                                            course
+                                                        )
+                                                    }
+                                                    showDetails={true}
+                                                    showEdit={false}
+                                                    showDelete={false}
+                                                />
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                )}
+                            </Box>
+
+                            <Box>
+                                <Typography variant="h6" gutterBottom>
+                                    All courses
+                                </Typography>
+                                <Grid container spacing={3}>
+                                    {filteredAllCourses.map((course) => (
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            sm={6}
+                                            md={4}
+                                            key={course.id}
+                                        >
+                                            <CourseCard
+                                                course={course}
+                                                showDetails={false}
+                                                showEdit={false}
+                                                showDelete={false}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </Box>
+                        </>
+                    )}
+
+                    {isAdmin && (
+                        <Box>
+                            <Typography variant="h6" gutterBottom>
+                                All courses (manage)
+                            </Typography>
+                            <Grid container spacing={3}>
+                                {filteredAllCourses.map((course) => (
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                        key={course.id}
+                                    >
+                                        <CourseCard
+                                            course={course}
+                                            onOpenDetails={() =>
+                                                handleOpenDetails(course)
+                                            }
+                                            onEdit={() =>
+                                                handleOpenEdit(course)
+                                            }
+                                            onDelete={() =>
+                                                handleOpenDelete(course)
+                                            }
+                                            showDetails={true}
+                                            showEdit={true}
+                                            showDelete={true}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    )}
+
+                    {isUser && (
+                        <Box>
+                            <Typography variant="h6" gutterBottom>
+                                All courses
+                            </Typography>
+                            <Grid container spacing={3}>
+                                {filteredAllCourses.map((course) => (
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                        key={course.id}
+                                    >
+                                        <CourseCard
+                                            course={course}
+                                            showDetails={false}
+                                            showEdit={false}
+                                            showDelete={false}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    )}
+
+                    {!isAdmin && !isStaff && !isStudent && !isUser && (
+                        <Box>
+                            <Typography variant="h6" gutterBottom>
+                                All courses
+                            </Typography>
+                            <Grid container spacing={3}>
+                                {filteredAllCourses.map((course) => (
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                        key={course.id}
+                                    >
+                                        <CourseCard
+                                            course={course}
+                                            showDetails={false}
+                                            showEdit={false}
+                                            showDelete={false}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    )}
+                </Box>
             )}
 
-            {/* Dialogs */}
             <AddCourseDialog
                 open={isAddOpen}
                 onClose={closeAllDialogs}

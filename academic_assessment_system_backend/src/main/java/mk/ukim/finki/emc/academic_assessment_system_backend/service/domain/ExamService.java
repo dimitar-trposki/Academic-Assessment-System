@@ -17,4 +17,5 @@ public interface ExamService {
 
     Optional<Exam> deleteById(Long id);
 
+    List<Exam> findAllByCourseId(Long courseId);
 }

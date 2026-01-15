@@ -29,6 +29,26 @@ const useUsers = () => {
             .catch((error) => console.log(error));
     }, []);
 
+    const findAllStaff = useCallback((id) => {
+        return userRepository
+            .findAllStaff(id)
+            .then((response) => {
+                console.log(`Fetched all staff`);
+                return response.data;
+            })
+            .catch((error) => console.log(error));
+    }, []);
+
+    const findAllStudents = useCallback((id) => {
+        return userRepository
+            .findAllStudents(id)
+            .then((response) => {
+                console.log(`Fetched all students`);
+                return response.data;
+            })
+            .catch((error) => console.log(error));
+    }, []);
+
     const findById = useCallback((id) => {
         return userRepository
             .findById(id)
@@ -169,12 +189,24 @@ const useUsers = () => {
             .catch((error) => console.log(error));
     }, []);
 
+    const findCoursesByUserId = useCallback((id) => {
+        return userRepository
+            .findCoursesByUserId(id)
+            .then((response) => {
+                console.log(`Fetched courses for user with ID: ${id}`);
+                return response.data;
+            })
+            .catch((error) => console.log(error));
+    }, []);
+
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
 
     return {
         ...state,
+        findAllStaff: findAllStaff,
+        findAllStudents: findAllStudents,
         onAdd: onAdd,
         onEdit: onEdit,
         onDelete: onDelete,
@@ -186,6 +218,7 @@ const useUsers = () => {
         exportUsers: exportUsers,
         requestPasswordReset: requestPasswordReset,
         confirmPasswordReset: confirmPasswordReset,
+        findCoursesByUserId: findCoursesByUserId,
         fetchUsers: fetchUsers,
     };
 };

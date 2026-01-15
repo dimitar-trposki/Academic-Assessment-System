@@ -81,4 +81,9 @@ public class CourseStaffAssignmentApplicationServiceImpl implements CourseStaffA
         return DisplayCourseStaffAssignmentDto.from(courseStaffAssignmentService.findAllByCourseIdWithUser(courseId));
     }
 
+    @Override
+    public List<DisplayCourseStaffAssignmentDto> findCourseStaffAssignmentByUserId(Long userId) {
+        return DisplayCourseStaffAssignmentDto.from(courseStaffAssignmentService.findCourseStaffAssignmentByUserId(userId));
+    }
+
 }

@@ -1,4 +1,3 @@
-// src/ui/components/exams/ExamCard/ExamCard.jsx
 import React from "react";
 import "./ExamCard.css";
 
@@ -13,7 +12,7 @@ import {
     Typography,
 } from "@mui/material";
 
-import MenuBookIcon from "@mui/icons-material/MenuBook"; // ист icon како кај courses
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -22,7 +21,15 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 const normalizeTime = (t) => (t ? t.substring(0, 5) : "");
 
-const ExamCard = ({exam, onOpenDetails, onEdit, onDelete}) => {
+const ExamCard = ({
+                      exam,
+                      onOpenDetails,
+                      onEdit,
+                      onDelete,
+                      showDetails = true,
+                      showEdit = true,
+                      showDelete = true,
+                  }) => {
     const courseCode = exam.course?.courseCode || "COURSE";
     const courseName = exam.course?.courseName || "Exam";
 
@@ -37,8 +44,9 @@ const ExamCard = ({exam, onOpenDetails, onEdit, onDelete}) => {
             ? exam.reservedLaboratories.join(", ")
             : "No labs";
 
+    const showAnyActions = showDetails || showEdit || showDelete;
+
     return (
-        // ✅ исти класи како CourseCard
         <Card className="course-card-root" elevation={2}>
             <CardContent className="course-card-content">
                 <Stack
@@ -67,39 +75,49 @@ const ExamCard = ({exam, onOpenDetails, onEdit, onDelete}) => {
                         </Typography>
                     </Stack>
 
-                    <Stack spacing={0.5} alignItems="flex-end">
-                        <Stack direction="row" spacing={0.5}>
-                            <Tooltip title="Details">
-                                <IconButton
-                                    size="small"
-                                    onClick={onOpenDetails}
-                                >
-                                    <InfoOutlinedIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Edit exam">
-                                <IconButton size="small" onClick={onEdit}>
-                                    <EditIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete exam">
-                                <IconButton
-                                    size="small"
-                                    color="error"
-                                    onClick={onDelete}
-                                >
-                                    <DeleteOutlineIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                        </Stack>
+                    {showAnyActions && (
+                        <Stack spacing={0.5} alignItems="flex-end">
+                            <Stack direction="row" spacing={0.5}>
+                                {showDetails && (
+                                    <Tooltip title="Details">
+                                        <IconButton
+                                            size="small"
+                                            onClick={onOpenDetails}
+                                        >
+                                            <InfoOutlinedIcon fontSize="small"/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                                {showEdit && (
+                                    <Tooltip title="Edit exam">
+                                        <IconButton
+                                            size="small"
+                                            onClick={onEdit}
+                                        >
+                                            <EditIcon fontSize="small"/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                                {showDelete && (
+                                    <Tooltip title="Delete exam">
+                                        <IconButton
+                                            size="small"
+                                            color="error"
+                                            onClick={onDelete}
+                                        >
+                                            <DeleteOutlineIcon fontSize="small"/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                            </Stack>
 
-                        {/* користиме истата chip класа како Semester chip */}
-                        <Chip
-                            size="small"
-                            label={`Capacity ${capacity}`}
-                            className="course-card-semester-chip"
-                        />
-                    </Stack>
+                            <Chip
+                                size="small"
+                                label={`Capacity ${capacity}`}
+                                className="course-card-semester-chip"
+                            />
+                        </Stack>
+                    )}
                 </Stack>
 
                 <Box className="course-card-footer">
@@ -130,9 +148,7 @@ const ExamCard = ({exam, onOpenDetails, onEdit, onDelete}) => {
                             className="course-card-meta-item"
                         >
                             <PeopleAltOutlinedIcon fontSize="small"/>
-                            <Typography variant="caption">
-                                {labs}
-                            </Typography>
+                            <Typography variant="caption">{labs}</Typography>
                         </Stack>
                     </Stack>
                 </Box>

@@ -21,4 +21,6 @@ public interface StudentService {
 
     Optional<Student> findByStudentIndex(String studentIndex);
 
+    Optional<Student> findStudentByUserId(Long userId);
+
 }

@@ -16,6 +16,12 @@ const courseRepository = {
     delete: async (id) => {
         return await axiosInstance.delete(`/courses/${id}/delete`);
     },
+    findAllForStaff: async () => {
+        return await axiosInstance.get("/courses/find-by-staffId");
+    },
+    findAllForStudent: async () => {
+        return await axiosInstance.get("/courses/find-by-studentId");
+    },
 };
 
 export default courseRepository;

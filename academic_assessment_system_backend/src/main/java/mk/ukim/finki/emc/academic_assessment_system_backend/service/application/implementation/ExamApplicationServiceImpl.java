@@ -50,4 +50,10 @@ public class ExamApplicationServiceImpl implements ExamApplicationService {
                 .deleteById(id)
                 .map(DisplayExamDto::from);
     }
+
+    @Override
+    public List<DisplayExamDto> findAllByCourseId(Long courseId) {
+        return DisplayExamDto.from(examService
+                .findAllByCourseId(courseId));
+    }
 }

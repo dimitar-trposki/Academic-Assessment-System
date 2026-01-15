@@ -17,10 +17,13 @@ public interface CourseStaffAssignmentRepository extends JpaRepository<CourseSta
 
     void deleteByCourseId(Long courseId);
 
+    List<CourseStaffAssignment> findCourseStaffAssignmentByUserId(Long userId);
+
     @Query("""
                 SELECT csa FROM CourseStaffAssignment csa
                 JOIN FETCH csa.user u
                 WHERE csa.course.id = :courseId
             """)
     List<CourseStaffAssignment> findAllByCourseIdWithUser(@Param("courseId") Long courseId);
+
 }

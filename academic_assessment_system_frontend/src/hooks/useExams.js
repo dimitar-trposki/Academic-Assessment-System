@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import examRepository from "../repository/examRepository.js";
+import courseRepository from "../repository/courseRepository.js";
 
 const initialState = {
     "exams": [],
@@ -62,6 +63,32 @@ const useExams = () => {
             .catch((error) => console.log(error));
     }, [fetchExams]);
 
+    const findAllExamsForStaff = useCallback(() => {
+        return examRepository
+            .findAllExamsForStaff()
+            .then((response) => {
+                console.log("Fetched exams for current staff user.");
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+                throw error;
+            });
+    }, []);
+
+    const findAllExamsForStudent = useCallback(() => {
+        return examRepository
+            .findAllExamsForStudent()
+            .then((response) => {
+                console.log("Fetched exams for current student user.");
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+                throw error;
+            });
+    }, []);
+
     useEffect(() => {
         fetchExams();
     }, [fetchExams]);
@@ -72,6 +99,8 @@ const useExams = () => {
         onEdit: onEdit,
         onDelete: onDelete,
         findById: findById,
+        findAllExamsForStaff: findAllExamsForStaff,
+        findAllExamsForStudent: findAllExamsForStudent,
     };
 };
 

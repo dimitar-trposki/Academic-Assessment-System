@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
                     existingUser.setFirstName(user.getFirstName());
                     existingUser.setLastName(user.getLastName());
                     existingUser.setEmail(user.getEmail());
-                    existingUser.setPassword(user.getPassword());
+                    existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
                     existingUser.setUserRole(user.getUserRole());
                     existingUser.setStudent(user.getStudent());
                     return userRepository.save(existingUser);

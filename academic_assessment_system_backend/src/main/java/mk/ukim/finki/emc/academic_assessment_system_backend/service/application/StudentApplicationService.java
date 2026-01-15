@@ -23,4 +23,6 @@ public interface StudentApplicationService {
 
     Optional<DisplayStudentDto> findByStudentIndex(String studentIndex);
 
+    Optional<DisplayStudentDto> findStudentByUserId(Long userId);
+
 }

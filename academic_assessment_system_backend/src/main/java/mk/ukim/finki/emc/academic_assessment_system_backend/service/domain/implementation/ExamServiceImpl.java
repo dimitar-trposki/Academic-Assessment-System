@@ -53,4 +53,9 @@ public class ExamServiceImpl implements ExamService {
         exam.ifPresent(examRepository::delete);
         return exam;
     }
+
+    @Override
+    public List<Exam> findAllByCourseId(Long courseId) {
+        return examRepository.findAllByCourseId(courseId);
+    }
 }
