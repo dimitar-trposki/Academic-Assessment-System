@@ -52,12 +52,6 @@ public class CourseApplicationServiceImpl implements CourseApplicationService {
                 .map(DisplayCourseDto::from);
     }
 
-//    @Override
-//    public DisplayCourseDto save(CreateCourseDto createCourseDto) {
-//        return DisplayCourseDto
-//                .from(courseService.save(createCourseDto.toCourse()));
-//    }
-
     @Override
     @Transactional
     public DisplayCourseDto save(CreateCourseDto createCourseDto) {
@@ -70,13 +64,6 @@ public class CourseApplicationServiceImpl implements CourseApplicationService {
 
         return DisplayCourseDto.from(reloaded);
     }
-
-//    @Override
-//    public Optional<DisplayCourseDto> update(Long id, CreateCourseDto createCourseDto) {
-//        return courseService
-//                .update(id, createCourseDto.toCourse())
-//                .map(DisplayCourseDto::from);
-//    }
 
     @Override
     @Transactional
@@ -95,13 +82,6 @@ public class CourseApplicationServiceImpl implements CourseApplicationService {
 
         return Optional.of(DisplayCourseDto.from(reloaded));
     }
-
-//    @Override
-//    public Optional<DisplayCourseDto> deleteById(Long id) {
-//        return courseService
-//                .deleteById(id)
-//                .map(DisplayCourseDto::from);
-//    }
 
     @Override
     @Transactional

@@ -103,10 +103,6 @@ public class UserController {
     public JwtUserPrincipal me(@AuthenticationPrincipal JwtUserPrincipal principal) {
         return principal;
     }
-//    @GetMapping("/me")
-//    public DisplayMyProfileDto me(@AuthenticationPrincipal JwtUserPrincipal principal) {
-//        return userApplicationService.myProfile(principal.id());
-//    }
 
     @Operation(
             summary = "Register new user",
@@ -470,12 +466,4 @@ public class UserController {
     public ResponseEntity<List<DisplayCourseStaffAssignmentDto>> findCoursesByUserId(@PathVariable Long id) {
         return ResponseEntity.ok(courseStaffAssignmentApplicationService.findCourseStaffAssignmentByUserId(id));
     }
-
-//    @GetMapping("/me")
-//    public ResponseEntity<RegisterUserResponseDto> me(@AuthenticationPrincipal User user) {
-//        return userApplicationService
-//                .findByEmail(user.getEmail())
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.badRequest().build());
-//    }
 }

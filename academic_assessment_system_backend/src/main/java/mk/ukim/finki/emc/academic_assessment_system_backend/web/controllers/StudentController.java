@@ -109,7 +109,6 @@ public class StudentController {
     public ResponseEntity<DisplayStudentDto> save(
             @Valid @RequestBody CreateStudentDto createStudentDto
     ) {
-        //return ResponseEntity.ok(studentApplicationService.save(createStudentDto));
         return studentApplicationService
                 .save(createStudentDto)
                 .map(ResponseEntity::ok)

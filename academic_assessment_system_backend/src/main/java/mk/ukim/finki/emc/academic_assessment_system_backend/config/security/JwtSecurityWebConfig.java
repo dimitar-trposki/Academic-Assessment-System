@@ -33,17 +33,6 @@ public class JwtSecurityWebConfig {
         this.jwtFilter = jwtFilter;
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-//        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-//        corsConfiguration.setAllowedHeaders(List.of("*"));
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//        return source;
-//    }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -59,8 +48,9 @@ public class JwtSecurityWebConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withDefaultRolePrefix()
-                .role("ADMIN").implies("PROFESSOR")
-                .role("PROFESSOR").implies("STUDENT")
+                .role("ADMIN").implies("STAFF")
+                .role("STAFF").implies("STUDENT")
+                .role("STUDENT").implies("USER")
                 .build();
     }
 
@@ -70,64 +60,6 @@ public class JwtSecurityWebConfig {
         expressionHandler.setRoleHierarchy(roleHierarchy);
         return expressionHandler;
     }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .cors(corsCustomizer ->
-//                        corsCustomizer.configurationSource(corsConfigurationSource())
-//                )
-//                .headers(headers -> headers
-//                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-//                )
-//                .authorizeHttpRequests(authorizeHttpRequestsCustomizer ->
-//                        authorizeHttpRequestsCustomizer
-//                                .requestMatchers(
-//                                        "/swagger-ui/**",
-//                                        "/v3/api-docs/**",
-//                                        "/h2/**",
-//                                        "/api/user/register",
-//                                        "/api/user/login",
-//                                        "/api/**"
-//                                )
-//                                .permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/api/exams/add").permitAll()
-//                                .requestMatchers("/api/user/me")
-//                                .authenticated()
-//                                .requestMatchers(
-//                                        "/api/restaurants",
-//                                        "/api/restaurants/{id}",
-//                                        "/api/dishes",
-//                                        "/api/dishes/{id}",
-//                                        "/api/dishes/{id}/details",
-//                                        "/api/dishes/{id}/add-to-order",
-//                                        "/api/dishes/{id}/remove-from-order",
-//                                        "/api/orders/pending",
-//                                        "/api/orders/pending/confirm",
-//                                        "/api/orders/pending/cancel"
-//                                )
-//                                .hasRole("CUSTOMER")
-//                                .requestMatchers(
-//                                        "/api/dishes/add",
-//                                        "/api/dishes/{id}/edit",
-//                                        "/api/dishes/{id}/delete",
-//                                        "/api/restaurants/add",
-//                                        "/api/restaurants/{id}/edit",
-//                                        "/api/restaurants/{id}/delete"
-//                                )
-//                                .hasRole("OWNER")
-//                                .requestMatchers("/api/users/{username}")
-//                                .hasRole("ADMIN")
-//                                .anyRequest()
-//                                .hasRole("ADMIN")
-//                )
-//                .sessionManagement(sessionManagementConfigurer ->
-//                        sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
-//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//        return http.build();
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -150,9 +82,10 @@ public class JwtSecurityWebConfig {
                                 "/api/auth/register",
                                 "/api/auth/login"
                         ).permitAll()
-//                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/courses", "/api/exams", "/api/students", "/api/users")
+                        .permitAll()
+                        .requestMatchers("/api/courses/**", "/api/exams/**", "/api/students/**", "/api/users/**")
+                        .hasAnyRole("ADMIN", "STAFF", "STUDENT")
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

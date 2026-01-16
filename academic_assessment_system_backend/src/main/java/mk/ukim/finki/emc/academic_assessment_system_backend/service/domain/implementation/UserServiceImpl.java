@@ -65,9 +65,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(User user) {
-//        if (findByUsername(user.getUsername()).isPresent())
-//            throw new UsernameAlreadyExistsException(user.getUsername());
-
         return userRepository.save(new User(
                 user.getFirstName(),
                 user.getLastName(),
@@ -81,8 +78,6 @@ public class UserServiceImpl implements UserService {
     public User login(String email, String password) {
         User user = findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
-//        if (!passwordEncoder.matches(password, user.getPassword()))
-//            throw new IncorrectPasswordException();
         return user;
     }
 
@@ -90,11 +85,4 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByEmail(String username) {
         return userRepository.findByEmail(username);
     }
-
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        return userRepository
-//                .findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException(username));
-//    }
 }

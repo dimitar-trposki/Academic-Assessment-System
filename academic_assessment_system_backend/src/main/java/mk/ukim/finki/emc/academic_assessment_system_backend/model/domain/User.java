@@ -33,7 +33,6 @@ public class User {
     @Column(nullable = false, length = 150)
     private String email;
 
-    //    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
