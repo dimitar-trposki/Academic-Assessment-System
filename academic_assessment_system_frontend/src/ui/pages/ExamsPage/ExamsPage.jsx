@@ -7,7 +7,7 @@ const ExamsPage = () => {
     return (
         <div className="exams-page-root">
             <Box className="exams-header">
-                <Box>
+                <Box className="exams-title-box">
                     <Typography variant="h4" className="page-title">
                         Exams
                     </Typography>

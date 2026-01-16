@@ -1,4 +1,5 @@
 import React from "react";
+import "./DeleteUserDialog.css";
 import {
     Dialog,
     DialogTitle,
@@ -17,12 +18,18 @@ const DeleteUserDialog = ({open, onClose, onConfirm, context}) => {
         : `${context.entity.studentFirstName} ${context.entity.studentLastName}`;
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog
+            open={open}
+            onClose={onClose}
+            className="dialog-theme course-dialog-root user-dialog-root"
+            maxWidth="xs"
+            fullWidth
+        >
             <DialogTitle>
                 Delete {isUser ? "user" : "student"}?
             </DialogTitle>
-            <DialogContent>
-                <Typography>
+            <DialogContent dividers>
+                <Typography variant="body2">
                     Are you sure you want to delete{" "}
                     <strong>{name}</strong>?
                 </Typography>

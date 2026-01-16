@@ -1,0 +1,197 @@
+/* Outer wrapper */
+.my-profile-root {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding: 0 1rem 2.5rem;
+}
+
+/* Main panel */
+.my-profile-card {
+    width: 100%;
+    max-width: 1080px;
+    border-radius: 24px;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617);
+    border: 1px solid rgba(30, 64, 175, 0.7);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9);
+    color: #e5e7eb;
+}
+
+/* Content padding */
+.my-profile-card-content {
+    padding: 1.8rem 2.1rem 2.2rem;
+}
+
+/* HEADER --------------------------------------------------- */
+
+.my-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.4rem;
+}
+
+.my-profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: radial-gradient(circle at top, #2563eb, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.85);
+    flex-shrink: 0;
+}
+
+.my-profile-avatar span {
+    color: #f9fafb;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.my-profile-overline {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+.my-profile-title {
+    font-weight: 600;
+    margin-top: 0.15rem;
+    color: #f9fafb;
+}
+
+.my-profile-subtitle {
+    font-size: 0.85rem;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+.my-profile-subtitle span {
+    color: #bfdbfe;
+}
+
+/* PROFILE FIELD CARDS -------------------------------------- */
+
+.my-profile-fields-grid {
+    margin-top: 1.6rem;
+    margin-bottom: 1.4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.25rem;
+}
+
+.my-profile-field {
+    background: rgba(15, 23, 42, 0.98);
+    border-radius: 18px;
+    border: 1px solid rgba(37, 99, 235, 0.45);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    padding: 0.85rem 1.1rem 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.my-profile-field label {
+    font-size: 0.7rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgba(148, 163, 184, 0.95);
+    margin-bottom: 0.35rem;
+}
+
+.my-profile-field span {
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: #f9fafb;
+}
+
+/* role pill */
+.my-profile-role-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.15rem 0.75rem;
+    border: 1px solid rgba(59, 130, 246, 0.9);
+    background: rgba(15, 23, 42, 0.95);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+}
+
+/* WHITE SECTIONS (courses / registrations / staff courses) - */
+
+.my-profile-section-card {
+    margin-top: 1.8rem;
+    padding: 1.1rem 1.25rem 1.3rem;
+    border-radius: 18px;
+    background: #f9fafb;
+    color: #020617;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.75);
+}
+
+.my-profile-section-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+    color: #0f172a;
+}
+
+/* text in white cards */
+.my-profile-section-card .my-profile-muted {
+    color: #6b7280;
+}
+
+.my-profile-section-card .my-profile-list .MuiListItemText-primary {
+    color: #0f172a;
+    font-size: 0.93rem;
+}
+
+.my-profile-section-card .my-profile-list .MuiListItemText-secondary {
+    color: #4b5563;
+}
+
+/* For safety if lists are reused elsewhere */
+.my-profile-list .MuiListItemText-primary {
+    color: inherit;
+}
+
+.my-profile-list .MuiListItemText-secondary {
+    color: inherit;
+}
+
+/* FOOTER --------------------------------------------------- */
+
+.my-profile-footer {
+    margin-top: 2.2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.my-profile-logout {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1.7rem !important;
+    background: #2563eb !important;
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.8) !important;
+}
+
+.my-profile-logout:hover {
+    background: #1d4ed8 !important;
+}
+
+/* MOBILE --------------------------------------------------- */
+
+@media (max-width: 600px) {
+    .my-profile-card-content {
+        padding: 1.4rem 1.2rem 1.7rem;
+    }
+
+    .my-profile-fields-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.my-profile-card {
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617) !important;
+}

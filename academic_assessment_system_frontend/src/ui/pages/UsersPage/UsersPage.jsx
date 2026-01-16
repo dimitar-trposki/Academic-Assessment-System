@@ -7,7 +7,7 @@ const UsersPage = () => {
     return (
         <div className="users-page-root">
             <Box className="users-header">
-                <Box>
+                <Box className="users-title-box">
                     <Typography variant="h4" className="page-title">
                         Users
                     </Typography>

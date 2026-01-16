@@ -1,0 +1,42 @@
+.user-details-dialog .MuiDialog-paper {
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617);
+    color: #e5e7eb;
+    border-radius: 24px;
+    border: 1px solid rgba(30, 64, 175, 0.7);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.95);
+}
+
+/* Mini-tables inside the dialog */
+.user-details-table-container {
+    background: #020617;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+}
+
+/* Header row – blue gradient, white text */
+.user-details-table-container .MuiTableHead-root th {
+    background: linear-gradient(
+            90deg,
+            rgba(37, 99, 235, 0.98),
+            rgba(30, 64, 175, 0.98)
+    );
+    color: rgba(226, 232, 240, 0.98);
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+}
+
+/* Body rows – alternating navy / blue; text always light */
+.user-details-table-container .MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
+    background: rgba(37, 99, 235, 0.26);
+}
+
+.user-details-table-container .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+    background: rgba(15, 23, 42, 0.96);
+}
+
+.user-details-table-container .MuiTableBody-root td {
+    color: rgba(229, 231, 235, 0.96);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+}

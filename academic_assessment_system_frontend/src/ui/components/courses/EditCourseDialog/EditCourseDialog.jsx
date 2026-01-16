@@ -61,22 +61,11 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
         });
     }, [course]);
 
-    const handleChangeField = (event) => {
-        const {name, value} = event.target;
-        setFormData((prev) => ({...prev, [name]: value}));
-    };
-
-    const handleChangeProfessors = (_, value) => {
-        setFormData((prev) => ({...prev, professors: value}));
-    };
-
-    const handleChangeAssistants = (_, value) => {
-        setFormData((prev) => ({...prev, assistants: value}));
+    const handleChangeField = (e) => {
+        setFormData((prev) => ({...prev, [e.target.name]: e.target.value}));
     };
 
     const handleSubmit = () => {
-        if (!course) return;
-
         const payload = {
             courseCode: formData.courseCode,
             courseName: formData.courseName,
@@ -96,80 +85,73 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
             onClose={onClose}
             fullWidth
             maxWidth="md"
-            className="course-dialog-root"
+            className="dialog-theme course-dialog-root"
         >
             <DialogTitle>Edit course</DialogTitle>
+
             <DialogContent dividers>
-                <Grid container spacing={2} sx={{mt: 0.2}}>
-                    <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+
+                    {/* ROW 1: CODE + NAME */}
+                    <Grid item xs={12} md={6}>
                         <TextField
+                            fullWidth
                             label="Course code"
                             name="courseCode"
-                            fullWidth
                             value={formData.courseCode}
                             onChange={handleChangeField}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+
+                    <Grid item xs={12} md={6}>
                         <TextField
-                            label="Academic year"
-                            name="academicYear"
                             fullWidth
-                            value={formData.academicYear}
-                            onChange={handleChangeField}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
                             label="Course name"
                             name="courseName"
-                            fullWidth
                             value={formData.courseName}
                             onChange={handleChangeField}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+
+                    {/* ROW 2: YEAR + SEMESTER */}
+                    <Grid item xs={12} md={6}>
                         <TextField
+                            fullWidth
+                            label="Academic year"
+                            name="academicYear"
+                            value={formData.academicYear}
+                            onChange={handleChangeField}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            fullWidth
                             label="Semester"
                             name="semester"
                             type="number"
-                            fullWidth
                             value={formData.semester}
                             onChange={handleChangeField}
                         />
                     </Grid>
 
-                    {/* Professors */}
-                    <Grid item xs={12} sm={6}>
+                    {/* ROW 3: PROFESSORS */}
+                    <Grid item xs={12}>
                         <Autocomplete
                             multiple
                             options={professorOptions}
-                            getOptionLabel={fullName}
                             value={formData.professors}
-                            onChange={handleChangeProfessors}
+                            onChange={(_, value) =>
+                                setFormData((prev) => ({...prev, professors: value}))
+                            }
+                            getOptionLabel={fullName}
                             loading={loading}
-                            isOptionEqualToValue={(opt, val) => opt.id === val.id}
+                            isOptionEqualToValue={(o, v) => o.id === v.id}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     label="Professors"
-                                    placeholder={
-                                        loading ? "Loading..." : "Select professors"
-                                    }
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        endAdornment: (
-                                            <>
-                                                {loading ? (
-                                                    <CircularProgress
-                                                        color="inherit"
-                                                        size={18}
-                                                    />
-                                                ) : null}
-                                                {params.InputProps.endAdornment}
-                                            </>
-                                        ),
-                                    }}
+                                    placeholder="Select professors"
                                 />
                             )}
                             renderTags={(value, getTagProps) =>
@@ -185,37 +167,23 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
                         />
                     </Grid>
 
-                    {/* Assistants */}
-                    <Grid item xs={12} sm={6}>
+                    {/* ROW 4: ASSISTANTS */}
+                    <Grid item xs={12}>
                         <Autocomplete
                             multiple
                             options={assistantOptions}
-                            getOptionLabel={fullName}
                             value={formData.assistants}
-                            onChange={handleChangeAssistants}
+                            onChange={(_, value) =>
+                                setFormData((prev) => ({...prev, assistants: value}))
+                            }
+                            getOptionLabel={fullName}
                             loading={loading}
-                            isOptionEqualToValue={(opt, val) => opt.id === val.id}
+                            isOptionEqualToValue={(o, v) => o.id === v.id}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     label="Assistants"
-                                    placeholder={
-                                        loading ? "Loading..." : "Select assistants"
-                                    }
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        endAdornment: (
-                                            <>
-                                                {loading ? (
-                                                    <CircularProgress
-                                                        color="inherit"
-                                                        size={18}
-                                                    />
-                                                ) : null}
-                                                {params.InputProps.endAdornment}
-                                            </>
-                                        ),
-                                    }}
+                                    placeholder="Select assistants"
                                 />
                             )}
                             renderTags={(value, getTagProps) =>
@@ -230,11 +198,13 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
                             }
                         />
                     </Grid>
+
                 </Grid>
             </DialogContent>
+
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
+                <Button variant="contained" onClick={handleSubmit}>
                     Save changes
                 </Button>
             </DialogActions>

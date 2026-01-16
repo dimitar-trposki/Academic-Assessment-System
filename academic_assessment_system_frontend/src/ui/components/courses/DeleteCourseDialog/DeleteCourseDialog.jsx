@@ -1,3 +1,4 @@
+// src/ui/components/courses/DeleteCourseDialog/DeleteCourseDialog.jsx
 import React from "react";
 import "./DeleteCourseDialog.css";
 
@@ -10,7 +11,7 @@ import {
     Typography,
 } from "@mui/material";
 
-const DeleteCourseDialog = ({ open, onClose, course, onDelete }) => {
+const DeleteCourseDialog = ({open, onClose, course, onDelete}) => {
     const handleDelete = () => {
         if (!course) return;
         onDelete(course.id);
@@ -23,7 +24,7 @@ const DeleteCourseDialog = ({ open, onClose, course, onDelete }) => {
             onClose={onClose}
             maxWidth="xs"
             fullWidth
-            className="course-dialog-root"
+            className="dialog-theme course-dialog-root"
         >
             <DialogTitle>Delete course</DialogTitle>
             <DialogContent dividers>

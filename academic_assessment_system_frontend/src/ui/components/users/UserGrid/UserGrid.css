@@ -1,0 +1,150 @@
+.user-grid-root {
+    margin-top: 1.5rem;
+    padding: 1.5rem 1.75rem 2rem;
+    border-radius: 24px;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617);
+    border: 1px solid rgba(30, 64, 175, 0.7);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9);
+    color: #e5e7eb;
+}
+
+/* Top bar */
+.user-grid-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-grid-title {
+    font-weight: 600;
+}
+
+/* Import / Export / Add */
+.user-grid-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-grid-toolbar-actions .MuiButton-root {
+    text-transform: none;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    padding-inline: 0.9rem;
+}
+
+.user-grid-toolbar-actions .MuiButton-outlined {
+    border-color: rgba(248, 250, 252, 0.55);
+    color: #e5e7eb;
+    background: rgba(15, 23, 42, 0.55);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.user-grid-toolbar-actions .MuiButton-outlined:hover {
+    background: rgba(248, 250, 252, 0.08);
+    border-color: rgba(248, 250, 252, 0.9);
+}
+
+.user-grid-toolbar-actions .MuiButton-contained {
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.8);
+}
+
+/* Sections */
+.user-grid-sections {
+    margin-top: 0.5rem;
+}
+
+/* Cards containing each table */
+.user-card {
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+}
+
+.user-card-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #1d4ed8;
+}
+
+/* Table container */
+.user-table-container {
+    background: #020617;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+}
+
+/* Make all tables same width */
+.user-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Header row – like details tables */
+.user-table-container .MuiTableHead-root th {
+    background: linear-gradient(
+            90deg,
+            rgba(37, 99, 235, 0.98),
+            rgba(30, 64, 175, 0.98)
+    );
+    color: rgba(226, 232, 240, 0.98);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+}
+
+/* Body rows – dark navy alternation (no gray) */
+.user-table-container .MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
+    background: rgba(15, 23, 42, 0.92);
+}
+
+.user-table-container .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+    background: rgba(15, 23, 42, 0.78);
+}
+
+.user-table-container .MuiTableBody-root td {
+    color: rgba(229, 231, 235, 0.96);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+}
+
+/* Icons */
+.user-table-container .MuiIconButton-root {
+    color: #e5e7eb;
+}
+
+.user-table-container .MuiIconButton-root:hover {
+    color: #bfdbfe;
+}
+
+/* Loading state */
+.user-grid-loading {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .user-grid-root {
+        padding: 1.25rem 1.25rem 1.75rem;
+    }
+
+    .user-grid-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-grid-toolbar-actions {
+        align-self: stretch;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}

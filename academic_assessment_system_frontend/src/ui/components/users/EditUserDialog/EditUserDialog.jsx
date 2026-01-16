@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import "./EditUserDialog.css";
 import {
     Dialog,
     DialogTitle,
@@ -23,7 +24,7 @@ const EditUserDialog = ({open, onClose, user, onSave}) => {
         firstName: "",
         lastName: "",
         email: "",
-        password: "",      // new password (optional)
+        password: "",
         userRole: "",
         studentIndex: "",
         major: "",
@@ -33,17 +34,15 @@ const EditUserDialog = ({open, onClose, user, onSave}) => {
 
     useEffect(() => {
         if (user) {
-            setForm((prev) => ({
-                ...prev,
+            setForm({
                 firstName: user.firstName ?? "",
                 lastName: user.lastName ?? "",
                 email: user.email ?? "",
                 password: "",
                 userRole: user.userRole ?? "",
-                // ако некогаш пуштиш student info во DTO, можеш да го пополниш и тука
                 studentIndex: "",
                 major: "",
-            }));
+            });
         }
     }, [user]);
 
@@ -79,7 +78,6 @@ const EditUserDialog = ({open, onClose, user, onSave}) => {
             }
             : null;
 
-        // му праќаме и стар role, за да знае дали има transition во STUDENT
         onSave(
             user.id,
             dto,
@@ -93,10 +91,16 @@ const EditUserDialog = ({open, onClose, user, onSave}) => {
     const isStudent = form.userRole === "STUDENT";
 
     return (
-        <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
+        <Dialog
+            open={open}
+            onClose={handleCancel}
+            fullWidth
+            maxWidth="sm"
+            className="dialog-theme course-dialog-root user-dialog-root"
+        >
             <DialogTitle>Edit user</DialogTitle>
             <form onSubmit={handleSubmit}>
-                <DialogContent>
+                <DialogContent dividers>
                     <Stack spacing={2} mt={1}>
                         <TextField
                             label="First name"

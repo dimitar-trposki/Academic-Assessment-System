@@ -1,0 +1,76 @@
+.register-root {
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+}
+
+.register-container {
+    display: flex;
+    justify-content: center;
+}
+
+/* MAIN CARD — navy themed */
+.register-card {
+    border-radius: 24px !important;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617) !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7) !important;
+    border: 1px solid rgba(30, 64, 175, 0.7);
+    color: #f9fafb !important;
+}
+
+/* All text inside card becomes white */
+.register-card .MuiTypography-root {
+    color: #f9fafb !important;
+}
+
+.register-title {
+    font-weight: 600 !important;
+}
+
+/* Subtext gray for readability */
+.register-card .MuiTypography-root[color="text.secondary"] {
+    color: rgba(203, 213, 225, 0.85) !important;
+}
+
+/* Input text white */
+.register-card .MuiInputBase-input {
+    color: #f9fafb !important;
+}
+
+/* Input labels */
+.register-card .MuiInputLabel-root {
+    color: rgba(203, 213, 225, 0.85) !important;
+}
+
+/* Outlined border */
+.register-card .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(148, 163, 184, 0.5) !important;
+}
+
+.register-card .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #3b82f6 !important;
+}
+
+/* Error text */
+.register-card .MuiFormHelperText-root.Mui-error {
+    color: #fca5a5 !important;
+}
+
+/* Placeholder coloring */
+.register-card .MuiInputBase-input::placeholder {
+    color: rgba(148, 163, 184, 0.7) !important;
+}
+
+/* Register button */
+.register-submit-btn {
+    text-transform: none !important;
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    background: linear-gradient(135deg, #38bdf8, #6366f1) !important;
+    color: white !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.6) !important;
+}
+
+.register-submit-btn:hover {
+    background: linear-gradient(135deg, #0ea5e9, #4f46e5) !important;
+    transform: translateY(-1px);
+}

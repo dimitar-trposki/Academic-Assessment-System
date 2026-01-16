@@ -1,0 +1,6 @@
+/* Share styling with CourseDetails dialog */
+@import "../../courses/CourseDetails/CourseDetails.css";
+
+.exam-details-dialog .MuiTypography-root {
+    color: #e5e7eb;
+}

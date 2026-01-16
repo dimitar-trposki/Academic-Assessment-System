@@ -1,0 +1,11 @@
+.auth-toggle-btn {
+    text-transform: none !important;
+    border-radius: 999px !important;
+    padding-inline: 1rem !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+}
+
+.auth-toggle-btn:hover {
+    background-color: rgba(148, 163, 184, 0.15) !important;
+}

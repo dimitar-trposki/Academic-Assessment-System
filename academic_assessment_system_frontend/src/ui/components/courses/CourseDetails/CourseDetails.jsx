@@ -13,6 +13,7 @@ import {
     Grid,
     Stack,
     Typography,
+    Tooltip,
 } from "@mui/material";
 
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
@@ -45,9 +46,6 @@ const CourseDetails = ({
 
     const isAdmin = role === ROLE_ADMIN;
     const isStaff = role === ROLE_STAFF;
-    // студент и user можат да гледаат, ама немаат import/export
-    // const isStudent = role === ROLE_STUDENT;
-    // const isUser = role === ROLE_USER;
 
     useEffect(() => {
         if (!open || !courseId) return;
@@ -115,8 +113,14 @@ const CourseDetails = ({
         return null;
     }
 
-    const {courseCode, courseName, semester, academicYear, professors, assistants} =
-        details;
+    const {
+        courseCode,
+        courseName,
+        semester,
+        academicYear,
+        professors,
+        assistants,
+    } = details;
 
     const formatName = (u) =>
         u.fullName ||
@@ -130,9 +134,9 @@ const CourseDetails = ({
             onClose={onClose}
             maxWidth="md"
             fullWidth
-            className="course-details-dialog"
+            className="dialog-theme course-details-dialog"
         >
-            <DialogTitle>
+            <DialogTitle className="course-details-title">
                 <Stack
                     direction="row"
                     spacing={1}
@@ -162,9 +166,8 @@ const CourseDetails = ({
                     </Stack>
                 </Stack>
             </DialogTitle>
-            <DialogContent dividers>
+            <DialogContent dividers className="course-details-content">
                 <Grid container spacing={3}>
-                    {/* Info + students */}
                     <Grid item xs={12} md={6}>
                         <Typography
                             variant="subtitle2"
@@ -231,26 +234,45 @@ const CourseDetails = ({
                                     </Button>
                                 </Stack>
 
-                                <Button
-                                    component="label"
-                                    variant="text"
-                                    size="small"
-                                    sx={{p: 0}}
+                                <Tooltip
+                                    title={
+                                        "CSV format:\n" +
+                                        "• Required header: studentIndex\n" +
+                                        "• Each row contains ONE student index\n\n" +
+                                        "Example:\n" +
+                                        "studentIndex\n" +
+                                        "123456\n" +
+                                        "654321"
+                                    }
+                                    arrow
+                                    slotProps={{
+                                        tooltip: {
+                                            sx: {whiteSpace: "pre-line"}
+                                        }
+                                    }}
                                 >
-                                    <Typography
-                                        variant="body2"
-                                        color="primary"
-                                        sx={{textTransform: "none"}}
+                                    <Button
+                                        component="label"
+                                        variant="text"
+                                        size="small"
+                                        sx={{p: 0}}
                                     >
-                                        Choose CSV file…
-                                    </Typography>
-                                    <input
-                                        type="file"
-                                        accept=".csv"
-                                        hidden
-                                        onChange={handleFileChange}
-                                    />
-                                </Button>
+                                        <Typography
+                                            variant="body2"
+                                            color="primary"
+                                            sx={{textTransform: "none"}}
+                                        >
+                                            Choose CSV file…
+                                        </Typography>
+                                        <input
+                                            type="file"
+                                            accept=".csv"
+                                            hidden
+                                            onChange={handleFileChange}
+                                        />
+                                    </Button>
+                                </Tooltip>
+
                                 {uploadFile && (
                                     <Typography
                                         variant="caption"
@@ -264,7 +286,6 @@ const CourseDetails = ({
                         )}
                     </Grid>
 
-                    {/* Staff */}
                     <Grid item xs={12} md={6}>
                         <Typography
                             variant="subtitle2"

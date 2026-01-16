@@ -1,0 +1,114 @@
+/* Global dialog visual theme – use with className="dialog-theme" */
+
+/* === PAPER / BACKGROUND / BORDER === */
+.dialog-theme .MuiPaper-root {
+    border-radius: 22px !important;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617) !important;
+    color: #e5e7eb !important;
+    border: 1px solid rgba(148, 163, 184, 0.5) !important;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9) !important;
+}
+
+/* === TITLE === */
+.dialog-theme .MuiDialogTitle-root {
+    border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    padding-bottom: 0.75rem !important;
+}
+
+.dialog-theme .MuiDialogTitle-root .MuiTypography-root {
+    font-weight: 600 !important;
+    color: #f9fafb !important;
+}
+
+/* === CONTENT === */
+.dialog-theme .MuiDialogContent-root {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+}
+
+.dialog-theme .MuiDialogContent-root .MuiTypography-subtitle2 {
+    color: rgba(191, 219, 254, 0.95) !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+.dialog-theme .MuiDialogContent-root .MuiTypography-body2 {
+    color: #e5e7eb !important;
+}
+
+.dialog-theme .MuiDivider-root {
+    border-color: rgba(51, 65, 85, 0.9) !important;
+}
+
+/* === ACTIONS === */
+.dialog-theme .MuiDialogActions-root {
+    border-top: 1px solid rgba(51, 65, 85, 0.9);
+    padding: 0.75rem 1.5rem 0.9rem !important;
+}
+
+/* === INPUTS / TEXTFIELDS === */
+.dialog-theme .MuiInputLabel-root {
+    color: rgba(209, 213, 219, 0.85) !important;
+}
+
+.dialog-theme .MuiInputLabel-root.Mui-focused {
+    color: #bfdbfe !important;
+}
+
+.dialog-theme .MuiOutlinedInput-root {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border-radius: 12px !important;
+}
+
+.dialog-theme .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(71, 85, 105, 0.9) !important;
+}
+
+.dialog-theme
+.MuiOutlinedInput-root.Mui-focused
+.MuiOutlinedInput-notchedOutline {
+    border-color: rgba(96, 165, 250, 1) !important;
+}
+
+.dialog-theme .MuiInputBase-input {
+    color: #f9fafb !important;
+}
+
+.dialog-theme .MuiInputBase-input::placeholder {
+    color: rgba(148, 163, 184, 0.9);
+}
+
+/* === CHIPS === */
+.dialog-theme .MuiChip-root {
+    border-radius: 999px !important;
+}
+
+/* Make chip labels readable on dark background */
+.dialog-theme .MuiChip-root .MuiChip-label {
+    color: #f9fafb !important;
+}
+
+/* === AUTOCOMPLETE DROPDOWN (POPPER) === */
+.MuiAutocomplete-popper .MuiPaper-root {
+    background: #020617 !important;
+    color: #f9fafb !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(55, 65, 81, 0.9) !important;
+}
+
+.MuiAutocomplete-option {
+    font-size: 0.9rem !important;
+}
+
+.MuiAutocomplete-option.Mui-focused,
+.MuiAutocomplete-option[aria-selected="true"] {
+    background-color: rgba(37, 99, 235, 0.5) !important;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+    .dialog-theme .MuiDialogContent-root {
+        padding-inline: 0.75rem !important;
+    }
+}

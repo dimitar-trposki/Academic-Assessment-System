@@ -1,0 +1,32 @@
+/* Same visual style as course dialogs */
+@import "../../courses/AddCourseDialog/AddCourseDialog.css";
+
+.dialog-theme.course-dialog-root {
+    color: #e5e7eb;
+}
+
+/* Outlined inputs (including normal text inputs) */
+.dialog-theme.course-dialog-root .MuiOutlinedInput-root,
+.dialog-theme.course-dialog-root .MuiInputBase-input {
+    color: #e5e7eb;
+}
+
+/* Native date/time inputs inside the dialog */
+.dialog-theme.course-dialog-root input[type="date"],
+.dialog-theme.course-dialog-root input[type="time"] {
+    color: #e5e7eb;
+}
+
+/* Labels and icons: soft gray to match theme */
+.dialog-theme.course-dialog-root .MuiInputLabel-root {
+    color: rgba(156, 163, 175, 0.9);
+}
+
+.dialog-theme.course-dialog-root .MuiSvgIcon-root {
+    color: rgba(156, 163, 175, 0.9);
+}
+
+/* Focused label color */
+.dialog-theme.course-dialog-root .MuiInputLabel-root.Mui-focused {
+    color: #93c5fd;
+}

@@ -136,8 +136,7 @@ const ExamCard = ({
                             <CalendarMonthIcon fontSize="small"/>
                             <Typography variant="caption">
                                 {date || "No date"}{" "}
-                                {startTime &&
-                                    `· ${startTime} - ${endTime || "?"}`}
+                                {startTime && `· ${startTime} - ${endTime || "?"}`}
                             </Typography>
                         </Stack>
 

@@ -1,3 +1,4 @@
+// src/ui/components/courses/CourseGrid/CourseGrid.jsx
 import React, {useEffect, useMemo, useState} from "react";
 import "./CourseGrid.css";
 
@@ -203,6 +204,16 @@ const CourseGrid = () => {
                         <IconButton
                             size="small"
                             onClick={() => window.location.reload()}
+                            sx={{
+                                color: "#ffffff",
+                                bgcolor: "rgba(255, 255, 255, 0.10)",
+                                boxShadow: "0 6px 14px rgba(0,0,0,0.45)",
+                                backdropFilter: "blur(6px)",
+                                borderRadius: "8px",
+                                "&:hover": {
+                                    bgcolor: "rgba(255, 255, 255, 0.22)",
+                                },
+                            }}
                         >
                             <RefreshIcon fontSize="small"/>
                         </IconButton>
@@ -255,7 +266,7 @@ const CourseGrid = () => {
                     )}
                 </Box>
             ) : (
-                <Box>
+                <Box className="course-grid-content">
                     {isStaff && (
                         <>
                             <Box mb={3}>
@@ -276,7 +287,7 @@ const CourseGrid = () => {
                                                 item
                                                 xs={12}
                                                 sm={6}
-                                                md={4}
+                                                md={6}   // 2 per row on desktop
                                                 key={`my-${course.id}`}
                                             >
                                                 <CourseCard
@@ -314,7 +325,7 @@ const CourseGrid = () => {
                                             item
                                             xs={12}
                                             sm={6}
-                                            md={4}
+                                            md={6}   // 2 per row
                                             key={course.id}
                                         >
                                             <CourseCard
@@ -350,7 +361,7 @@ const CourseGrid = () => {
                                                 item
                                                 xs={12}
                                                 sm={6}
-                                                md={4}
+                                                md={6}  // 2 per row
                                                 key={`my-${course.id}`}
                                             >
                                                 <CourseCard
@@ -380,7 +391,7 @@ const CourseGrid = () => {
                                             item
                                             xs={12}
                                             sm={6}
-                                            md={4}
+                                            md={6}
                                             key={course.id}
                                         >
                                             <CourseCard
@@ -407,7 +418,7 @@ const CourseGrid = () => {
                                         item
                                         xs={12}
                                         sm={6}
-                                        md={4}
+                                        md={6}
                                         key={course.id}
                                     >
                                         <CourseCard
@@ -442,7 +453,7 @@ const CourseGrid = () => {
                                         item
                                         xs={12}
                                         sm={6}
-                                        md={4}
+                                        md={6}
                                         key={course.id}
                                     >
                                         <CourseCard
@@ -468,7 +479,7 @@ const CourseGrid = () => {
                                         item
                                         xs={12}
                                         sm={6}
-                                        md={4}
+                                        md={6}
                                         key={course.id}
                                     >
                                         <CourseCard

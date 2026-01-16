@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import "./AddUserDialog.css";
 import {
     Dialog,
     DialogTitle,
@@ -46,16 +47,21 @@ const AddUserDialog = ({open, onClose, onSave}) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave(form);
-        // form reset happens in parent when success; we keep it simple here
     };
 
     const isStudent = form.userRole === "STUDENT";
 
     return (
-        <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
+        <Dialog
+            open={open}
+            onClose={handleCancel}
+            fullWidth
+            maxWidth="sm"
+            className="dialog-theme course-dialog-root user-dialog-root"
+        >
             <DialogTitle>Add new user</DialogTitle>
             <form onSubmit={handleSubmit}>
-                <DialogContent>
+                <DialogContent dividers>
                     <Stack spacing={2} mt={1}>
                         <TextField
                             label="First name"

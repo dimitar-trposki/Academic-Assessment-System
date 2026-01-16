@@ -1,35 +1,21 @@
 import React, {useEffect, useState} from "react";
 import {
     Box,
-    Button,
     Card,
     CardContent,
     Grid,
     Stack,
     Typography,
     Chip,
-    Divider,
 } from "@mui/material";
-import {useNavigate} from "react-router";
 import useAuth from "../../../hooks/useAuth.js";
 import "./HomePage.css";
 
-const quickActions = [
-    {label: "Home", variant: "outlined", kind: "home"},
-    {label: "Register", variant: "contained", kind: "register"},
-    {label: "Log in", variant: "contained", kind: "login"},
-    {label: "Courses", variant: "outlined", kind: "courses"},
-    {label: "Exams", variant: "outlined", kind: "exams"},
-    {label: "Users", variant: "outlined", kind: "users"},
-    {label: "Students", variant: "outlined", kind: "student"},
-];
-
 const HomePage = ({
                       onNavigate = () => {
-                      },
+                      }
                   }) => {
     const [now, setNow] = useState(new Date());
-    const navigate = useNavigate();
     const {isLoggedIn} = useAuth();
 
     useEffect(() => {
@@ -40,7 +26,7 @@ const HomePage = ({
     const formattedDate = now.toLocaleDateString(undefined, {
         weekday: "long",
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
     });
 
@@ -50,173 +36,262 @@ const HomePage = ({
         second: "2-digit",
     });
 
-    const handleActionClick = (kind) => {
-        // old navigation for your internal 'views'
-        if (kind === "home") onNavigate("Home");
-        if (kind === "courses") onNavigate("Courses");
-        if (kind === "exams") onNavigate("Exams");
-        if (kind === "users") onNavigate("Users");
-        if (kind === "student") onNavigate("Students");
-
-        // actual routes for auth
-        if (kind === "register") {
-            navigate("/register");
-        }
-        if (kind === "login") {
-            navigate("/login");
-        }
-    };
-
     return (
         <Box className="home-root">
-            {/* Hero section */}
-            <Grid container spacing={3} sx={{mb: 3}}>
-                <Grid item xs={12} md={7}>
-                    <Card elevation={1}>
-                        <CardContent>
-                            <Stack spacing={2}>
-                                <Chip
-                                    label="Academic Assessment System"
-                                    color="primary"
-                                    sx={{alignSelf: "flex-start"}}
-                                />
-                                <Typography variant="h4" fontWeight={700}>
-                                    All your courses, exams and students in one place.
-                                </Typography>
-                                <Typography variant="body1" color="text.secondary">
-                                    Manage course assignments, exam sessions, student
-                                    registrations and user roles from a single dashboard.
-                                    As a student you can quickly see upcoming exams and
-                                    what you are enrolled in. As staff you can keep
-                                    everything organised and transparent.
-                                </Typography>
+            <Grid container spacing={3} className="home-top-grid">
+                <Grid item xs={12} md={8}>
+                    <Card className="home-card home-hero-card">
+                        <CardContent className="home-card-content home-hero-content">
+                            <Box className="home-hero-main">
+                                <Box className="home-hero-text">
+                                    <Chip
+                                        label="Academic Assessment System"
+                                        color="primary"
+                                        className="home-chip"
+                                    />
+                                    <Typography variant="h4" className="home-title">
+                                        All your academic data in one clear view.
+                                    </Typography>
+                                    <Typography variant="body1" className="home-subtitle">
+                                        Courses, exams, enrollments and user roles are organised
+                                        in a single place. Students always know what is next, and
+                                        staff keep teaching and assessment aligned.
+                                    </Typography>
+                                </Box>
+                            </Box>
 
-                                <Stack direction="row" spacing={1} flexWrap="wrap">
-                                    {quickActions.map((action) => (
-                                        <Button
-                                            key={action.label}
-                                            variant={action.variant}
-                                            color={
-                                                ["Register", "Log in"].includes(action.label)
-                                                    ? "secondary"
-                                                    : "primary"
-                                            }
-                                            size="small"
-                                            sx={{mt: 1}}
-                                            onClick={() => handleActionClick(action.kind)}
+                            <Grid container spacing={2} className="home-hero-stats">
+                                <Grid item xs={12} sm={4}>
+                                    <Box className="home-stat">
+                                        <Typography
+                                            variant="subtitle2"
+                                            className="home-stat-label"
                                         >
-                                            {action.label}
-                                        </Button>
-                                    ))}
-
-                                    {/* Only visible when user is logged in */}
-                                    {isLoggedIn && (
-                                        <Button
-                                            variant="text"
-                                            color="secondary"
-                                            size="small"
-                                            sx={{mt: 1}}
-                                            onClick={() => navigate("/me")}
+                                            Courses
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            className="home-stat-title"
                                         >
-                                            My profile
-                                        </Button>
-                                    )}
-                                </Stack>
-                            </Stack>
+                                            Structured overview
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-stat-text"
+                                        >
+                                            Organisation of courses per semester with assigned staff
+                                            and enrolled students.
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Box className="home-stat">
+                                        <Typography
+                                            variant="subtitle2"
+                                            className="home-stat-label"
+                                        >
+                                            Exams
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            className="home-stat-title"
+                                        >
+                                            Clear scheduling
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-stat-text"
+                                        >
+                                            Exam terms with date, time, room and registration status
+                                            in one place.
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Box className="home-stat">
+                                        <Typography
+                                            variant="subtitle2"
+                                            className="home-stat-label"
+                                        >
+                                            Roles
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            className="home-stat-title"
+                                        >
+                                            Role-based access
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-stat-text"
+                                        >
+                                            Tailored views for students, staff, administrators and
+                                            registered users.
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Grid>
 
-                {/* Today / clock card */}
-                <Grid item xs={12} md={5}>
-                    <Card elevation={1}>
-                        <CardContent>
-                            <Typography variant="subtitle2" color="text.secondary">
-                                Today
-                            </Typography>
-                            <Typography variant="h5" fontWeight={600} sx={{mb: 1}}>
-                                {formattedDate}
-                            </Typography>
+                <Grid item xs={12} md={4}>
+                    <Card className="home-card home-today-card">
+                        <CardContent className="home-card-content home-today-content">
+                            <Grid container spacing={2} className="home-today-grid">
+                                <Grid item xs={12} sm={6}>
+                                    <Box className="home-today-left">
+                                        <Typography
+                                            variant="subtitle2"
+                                            className="home-today-label"
+                                        >
+                                            Today
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-today-date"
+                                        >
+                                            {formattedDate}
+                                        </Typography>
+                                        <Typography
+                                            variant="h4"
+                                            className="home-today-time"
+                                        >
+                                            {formattedTime}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Box className="home-today-right">
+                                        <Typography
+                                            variant="subtitle2"
+                                            className="home-today-focus-title"
+                                        >
+                                            Focus for the day
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-today-text"
+                                        >
+                                            Students review upcoming exams and enrolled courses.
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-today-text"
+                                        >
+                                            Staff confirm exam sessions and registrations.
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            className="home-today-text"
+                                        >
+                                            Admins keep track of changes across the system.
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                            </Grid>
 
-                            <Typography
-                                variant="h3"
-                                fontWeight={700}
-                                sx={{mb: 2, fontVariantNumeric: "tabular-nums"}}
-                            >
-                                {formattedTime}
-                            </Typography>
-
-                            <Divider sx={{my: 2}}/>
-
-                            <Typography variant="body2" color="text.secondary">
-                                When you log in, this area can show your upcoming exams,
-                                deadlines and reminders for today.
-                            </Typography>
-
-                            <Stack spacing={1} sx={{mt: 2}}>
-                                <Typography variant="body2">
-                                    • No upcoming events for today yet.
-                                </Typography>
-                                <Typography variant="body2">
-                                    • Use the <b>Courses</b> and <b>Exams</b> pages to
-                                    start adding data.
-                                </Typography>
-                            </Stack>
+                            {isLoggedIn && (
+                                <Box className="home-today-footer">
+                                    <Typography
+                                        variant="caption"
+                                        className="home-today-caption"
+                                    >
+                                        Use the navigation bar above to move between Courses,
+                                        Exams, Users and your profile.
+                                    </Typography>
+                                </Box>
+                            )}
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
 
-            {/* Logged-in preview / explanation */}
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <Card elevation={1}>
-                        <CardContent>
-                            <Typography variant="h6" fontWeight={600} gutterBottom>
-                                For Students
+            <Grid container spacing={3} className="home-bottom-grid">
+                <Grid item xs={12} md={4}>
+                    <Card className="home-card home-feature-card home-feature-student">
+                        <CardContent className="home-card-content">
+                            <Typography
+                                variant="h6"
+                                className="home-feature-title"
+                            >
+                                Student experience
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" paragraph>
-                                Once logged in, students will see:
+                            <Typography
+                                variant="body2"
+                                className="home-feature-subtitle"
+                            >
+                                A focused view of what matters right now.
                             </Typography>
-                            <Stack spacing={0.7}>
-                                <Typography variant="body2">
-                                    • Personal list of enrolled courses
+                            <Stack spacing={0.6}>
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Enrolled courses grouped by semester.
                                 </Typography>
-                                <Typography variant="body2">
-                                    • Upcoming exam terms and locations
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Registered and upcoming exam terms.
                                 </Typography>
-                                <Typography variant="body2">
-                                    • Quick access to registration / deregistration
-                                </Typography>
-                                <Typography variant="body2">
-                                    • Summary of passed exams and points
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Status of attendance and passed exams.
                                 </Typography>
                             </Stack>
                         </CardContent>
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
-                    <Card elevation={1}>
-                        <CardContent>
-                            <Typography variant="h6" fontWeight={600} gutterBottom>
-                                For Professors & Admins
+                <Grid item xs={12} md={4}>
+                    <Card className="home-card home-feature-card home-feature-staff">
+                        <CardContent className="home-card-content">
+                            <Typography
+                                variant="h6"
+                                className="home-feature-title"
+                            >
+                                Staff workflow
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" paragraph>
-                                Logged-in staff will be able to:
+                            <Typography
+                                variant="body2"
+                                className="home-feature-subtitle"
+                            >
+                                Tools that keep teaching and assessment aligned.
                             </Typography>
-                            <Stack spacing={0.7}>
-                                <Typography variant="body2">
-                                    • Manage courses and assign teaching staff
+                            <Stack spacing={0.6}>
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Maintain courses and exam sessions.
                                 </Typography>
-                                <Typography variant="body2">
-                                    • Create and edit exam sessions
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Manage registrations and attendance lists.
                                 </Typography>
-                                <Typography variant="body2">
-                                    • Import / export students and registrations
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Import and export data for reporting.
                                 </Typography>
-                                <Typography variant="body2">
-                                    • Manage user roles and permissions
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    <Card className="home-card home-feature-card home-feature-admin">
+                        <CardContent className="home-card-content">
+                            <Typography
+                                variant="h6"
+                                className="home-feature-title"
+                            >
+                                Administration
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                className="home-feature-subtitle home-feature-subtitle-light"
+                            >
+                                Consistent data and clear responsibilities.
+                            </Typography>
+                            <Stack spacing={0.6}>
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Configure user roles and permissions.
+                                </Typography>
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Ensure integrity of course and exam data.
+                                </Typography>
+                                <Typography variant="body2" className="home-feature-text">
+                                    • Maintain a transparent academic record.
                                 </Typography>
                             </Stack>
                         </CardContent>

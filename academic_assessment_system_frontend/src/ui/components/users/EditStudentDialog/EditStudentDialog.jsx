@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import "./EditStudentDialog.css";
 import {
     Dialog,
     DialogTitle,
@@ -25,7 +26,7 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
         firstName: "",
         lastName: "",
         userRole: "STUDENT",
-        password: "", // new password (optional)
+        password: "",
     });
 
     const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,7 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
                 major: student.studentMajor ?? student.major ?? "",
                 firstName: student.studentFirstName ?? "",
                 lastName: student.studentLastName ?? "",
-                userRole: student.userRole ?? "STUDENT", // ако го имаш во DTO
+                userRole: student.userRole ?? "STUDENT",
                 password: "",
             });
         }
@@ -58,18 +59,18 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
         const studentDto = {
             studentIndex: form.studentIndex,
             major: form.major,
-            userId: student.userId, // од DisplayUserStudentDto
+            userId: student.userId,
         };
 
         const userDto = {
             firstName: form.firstName,
             lastName: form.lastName,
-            email: student.studentEmail, // не го менуваме тука
+            email: student.studentEmail,
             userRole: form.userRole,
             password:
                 form.password && form.password.trim().length > 0
                     ? form.password
-                    : null, // ако е празно -> backend не менува password
+                    : null,
         };
 
         onSave(student, studentDto, userDto);
@@ -78,10 +79,16 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
     if (!student) return null;
 
     return (
-        <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
+        <Dialog
+            open={open}
+            onClose={handleCancel}
+            fullWidth
+            maxWidth="sm"
+            className="dialog-theme course-dialog-root user-dialog-root"
+        >
             <DialogTitle>Edit student profile</DialogTitle>
             <form onSubmit={handleSubmit}>
-                <DialogContent>
+                <DialogContent dividers>
                     <Stack spacing={2} mt={1}>
                         <Typography variant="subtitle2">
                             {student.studentEmail}

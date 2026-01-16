@@ -62,9 +62,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
             capacityOfStudents: formData.capacityOfStudents
                 ? Number(formData.capacityOfStudents)
                 : null,
-            course: formData.course
-                ? {id: formData.course.id}
-                : null,
+            course: formData.course ? {id: formData.course.id} : null,
             reservedLaboratories: labs,
             startTime: buildTimeForApi(formData.startTime),
             endTime: buildTimeForApi(formData.endTime),
@@ -75,7 +73,6 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
     };
 
     const courseOptions = Array.isArray(courses) ? courses : [];
-
     const getCourseLabel = (c) =>
         c ? `${c.courseCode} - ${c.courseName}` : "";
 
@@ -85,7 +82,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
             onClose={resetAndClose}
             fullWidth
             maxWidth="md"
-            className="course-dialog-root"
+            className="dialog-theme course-dialog-root"
         >
             <DialogTitle>Create new exam</DialogTitle>
             <DialogContent dividers>
@@ -99,6 +96,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                             onChange={handleChangeField}
                             helperText="Example: June 2025, January 2026..."
                             autoFocus
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -109,6 +107,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                             fullWidth
                             value={formData.capacityOfStudents}
                             onChange={handleChangeField}
+                            size="small"
                         />
                     </Grid>
 
@@ -121,6 +120,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                             value={formData.dateOfExam}
                             onChange={handleChangeField}
                             InputLabelProps={{shrink: true}}
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
@@ -132,6 +132,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                             value={formData.startTime}
                             onChange={handleChangeField}
                             InputLabelProps={{shrink: true}}
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
@@ -143,6 +144,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                             value={formData.endTime}
                             onChange={handleChangeField}
                             InputLabelProps={{shrink: true}}
+                            size="small"
                         />
                     </Grid>
 
@@ -160,10 +162,9 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                                     {...params}
                                     label="Course"
                                     placeholder={
-                                        loading
-                                            ? "Loading..."
-                                            : "Select course"
+                                        loading ? "Loading..." : "Select course"
                                     }
+                                    size="small"
                                     InputProps={{
                                         ...params.InputProps,
                                         endAdornment: (
@@ -174,7 +175,10 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                                                         size={18}
                                                     />
                                                 ) : null}
-                                                {params.InputProps.endAdornment}
+                                                {
+                                                    params.InputProps
+                                                        .endAdornment
+                                                }
                                             </>
                                         ),
                                     }}
@@ -192,6 +196,7 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                             value={formData.reservedLaboratories}
                             onChange={handleChangeField}
                             helperText="Comma-separated list, e.g. Lab 1, Lab 2"
+                            size="small"
                         />
                     </Grid>
                 </Grid>

@@ -25,7 +25,7 @@ const DeleteExamDialog = ({open, onClose, exam, onDelete}) => {
             onClose={onClose}
             maxWidth="xs"
             fullWidth
-            className="course-dialog-root"
+            className="dialog-theme course-dialog-root"
         >
             <DialogTitle>Delete exam</DialogTitle>
             <DialogContent dividers>

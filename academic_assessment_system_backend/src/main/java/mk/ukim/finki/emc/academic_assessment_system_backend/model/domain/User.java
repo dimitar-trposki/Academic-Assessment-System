@@ -37,7 +37,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "academic_role", nullable = false, length = 20)
+    @Column(name = "user_role", nullable = false, length = 20)
     private UserRole userRole;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

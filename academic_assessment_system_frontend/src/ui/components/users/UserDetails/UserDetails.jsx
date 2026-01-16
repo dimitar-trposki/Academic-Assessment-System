@@ -1,6 +1,5 @@
-// src/components/users/UserDetails/UserDetails.jsx
-
 import React, {useEffect, useState} from "react";
+import "./UserDetails.css";
 import {
     Dialog,
     DialogTitle,
@@ -23,25 +22,13 @@ import {
 
 import useStudents from "../../../../hooks/useStudents.js";
 
-/**
- * Format a camelCase / lower_snake key into a nicer header:
- * examName -> Exam Name, course_code -> Course Code
- */
 const formatHeader = (key) => {
     if (!key) return "";
-    // remove underscores
     const noUnderscore = key.replace(/_/g, " ");
-    // insert space before capital letters
     const spaced = noUnderscore.replace(/([A-Z])/g, " $1");
-    // capitalize first letter
     return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 };
 
-/**
- * Generic mini table that renders any array of objects.
- * It automatically creates columns from the keys of the first element.
- * Hides id-like fields (id, studentId, examId, etc.).
- */
 const GenericMiniTable = ({title, data}) => {
     if (!data || data.length === 0) {
         return (
@@ -56,7 +43,6 @@ const GenericMiniTable = ({title, data}) => {
         );
     }
 
-    // Remove id-like fields from columns
     const columns = Object.keys(data[0]).filter(
         (col) => !col.toLowerCase().includes("id")
     );
@@ -79,7 +65,11 @@ const GenericMiniTable = ({title, data}) => {
             <Typography variant="subtitle1" gutterBottom>
                 {title}
             </Typography>
-            <TableContainer component={Paper} variant="outlined">
+            <TableContainer
+                component={Paper}
+                variant="outlined"
+                className="user-details-table-container"
+            >
                 <Table size="small">
                     <TableHead>
                         <TableRow>
@@ -125,7 +115,6 @@ const UserDetails = ({open, onClose, user, student}) => {
     const [courseEnrollments, setCourseEnrollments] = useState([]);
     const [loadingRelations, setLoadingRelations] = useState(false);
 
-    // Whenever dialog opens for a student, load their exams + courses
     useEffect(() => {
         if (!open || !student) {
             setExamRegistrations([]);
@@ -146,7 +135,7 @@ const UserDetails = ({open, onClose, user, student}) => {
             } catch (e) {
                 console.error(
                     "Failed to load student exam registrations / enrollments",
-                    e,
+                    e
                 );
             } finally {
                 setLoadingRelations(false);
@@ -165,15 +154,19 @@ const UserDetails = ({open, onClose, user, student}) => {
         onClose();
     };
 
-    // Simple helpers to show who we’re displaying
     const isShowingStudent = Boolean(student);
     const isShowingUser = Boolean(user) && !student;
 
     return (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            fullWidth
+            maxWidth="md"
+            className="dialog-theme course-dialog-root user-details-dialog"
+        >
             <DialogTitle>User details</DialogTitle>
             <DialogContent dividers>
-                {/* USER (STAFF) DETAILS */}
                 {isShowingUser && (
                     <Box mb={2}>
                         <Typography variant="subtitle1" gutterBottom>
@@ -195,7 +188,6 @@ const UserDetails = ({open, onClose, user, student}) => {
                     </Box>
                 )}
 
-                {/* STUDENT DETAILS */}
                 {isShowingStudent && (
                     <>
                         <Box mb={2}>
@@ -235,13 +227,11 @@ const UserDetails = ({open, onClose, user, student}) => {
                             </Box>
                         ) : (
                             <>
-                                {/* Exam Registrations */}
                                 <GenericMiniTable
                                     title="Exam registrations"
                                     data={examRegistrations}
                                 />
 
-                                {/* Course Enrollments */}
                                 <GenericMiniTable
                                     title="Course enrollments"
                                     data={courseEnrollments}
@@ -251,7 +241,6 @@ const UserDetails = ({open, onClose, user, student}) => {
                     </>
                 )}
 
-                {/* Fallback if neither user nor student is selected */}
                 {!isShowingUser && !isShowingStudent && (
                     <Typography variant="body2" color="text.secondary">
                         No user selected.

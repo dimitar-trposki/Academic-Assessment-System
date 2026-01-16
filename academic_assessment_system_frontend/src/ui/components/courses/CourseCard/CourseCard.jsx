@@ -1,3 +1,4 @@
+// src/ui/components/courses/CourseCard/CourseCard.jsx
 import React from "react";
 import "./CourseCard.css";
 
@@ -39,13 +40,13 @@ const CourseCard = ({
     const showAnyActions = showDetails || showEdit || showDelete;
 
     return (
-        <Card className="course-card-root" elevation={2}>
+        <Card className="course-card-root" elevation={0}>
             <CardContent className="course-card-content">
                 <Stack
                     direction="row"
                     alignItems="flex-start"
                     justifyContent="space-between"
-                    spacing={1}
+                    spacing={1.25}
                 >
                     <Stack spacing={1}>
                         <Box className="course-card-icon">
@@ -69,7 +70,11 @@ const CourseCard = ({
 
                     <Stack spacing={0.5} alignItems="flex-end">
                         {showAnyActions && (
-                            <Stack direction="row" spacing={0.5}>
+                            <Stack
+                                direction="row"
+                                spacing={0.5}
+                                className="course-card-actions"
+                            >
                                 {showDetails && onOpenDetails && (
                                     <Tooltip title="Details">
                                         <IconButton
@@ -117,7 +122,7 @@ const CourseCard = ({
                 <Box className="course-card-footer">
                     <Stack
                         direction="row"
-                        spacing={1.25}
+                        spacing={1.5}
                         alignItems="center"
                         flexWrap="wrap"
                     >

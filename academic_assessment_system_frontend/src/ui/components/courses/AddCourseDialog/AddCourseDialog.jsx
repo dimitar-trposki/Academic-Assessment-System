@@ -1,3 +1,4 @@
+// src/ui/components/courses/AddCourseDialog/AddCourseDialog.jsx
 import React, {useState} from "react";
 import "./AddCourseDialog.css";
 
@@ -30,7 +31,6 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
 
     const {users, loading} = useUsers();
 
-    // ensure we ALWAYS have an array
     const allUsers = Array.isArray(users)
         ? users
         : Array.isArray(users?.users)
@@ -45,14 +45,13 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
         u.email ||
         `User #${u.id}`;
 
-    // 👇 we only know AcademicRole (STAFF/STUDENT)
     const staffUsers = allUsers.filter((u) => u.userRole === "STAFF");
 
     const professorOptions = staffUsers;
     const assistantOptions = staffUsers;
 
-    const handleChangeField = (event) => {
-        const {name, value} = event.target;
+    const handleChangeField = (e) => {
+        const {name, value} = e.target;
         setFormData((prev) => ({...prev, [name]: value}));
     };
 
@@ -89,60 +88,66 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
             onClose={resetAndClose}
             fullWidth
             maxWidth="md"
-            className="course-dialog-root"
+            className="dialog-theme course-dialog-root"
         >
             <DialogTitle>Create new course</DialogTitle>
+
             <DialogContent dividers>
-                <Grid container spacing={2} sx={{mt: 0.2}}>
-                    <Grid item xs={12} sm={6}>
+                <Grid container spacing={2}>
+                    {/* ROW 1: CODE + NAME */}
+                    <Grid item xs={12} md={6}>
                         <TextField
+                            fullWidth
                             label="Course code"
                             name="courseCode"
-                            fullWidth
                             value={formData.courseCode}
                             onChange={handleChangeField}
                             helperText="Example: EMC, AI, WPIS"
                             autoFocus
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+
+                    <Grid item xs={12} md={6}>
                         <TextField
+                            fullWidth
+                            label="Course name"
+                            name="courseName"
+                            value={formData.courseName}
+                            onChange={handleChangeField}
+                        />
+                    </Grid>
+
+                    {/* ROW 2: YEAR + SEMESTER */}
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            fullWidth
                             label="Academic year"
                             name="academicYear"
-                            fullWidth
                             value={formData.academicYear}
                             onChange={handleChangeField}
                             placeholder="2025"
                         />
                     </Grid>
-                    <Grid item xs={12}>
+
+                    <Grid item xs={12} md={6}>
                         <TextField
-                            label="Course name"
-                            name="courseName"
                             fullWidth
-                            value={formData.courseName}
-                            onChange={handleChangeField}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
                             label="Semester"
                             name="semester"
                             type="number"
-                            fullWidth
                             value={formData.semester}
                             onChange={handleChangeField}
                         />
                     </Grid>
 
-                    {/* Professors */}
-                    <Grid item xs={12} sm={6}>
+                    {/* ROW 3: PROFESSORS (FULL WIDTH) */}
+                    <Grid item xs={12}>
                         <Autocomplete
                             multiple
                             options={professorOptions}
-                            getOptionLabel={fullName}
                             value={formData.professors}
                             onChange={handleChangeProfessors}
+                            getOptionLabel={fullName}
                             loading={loading}
                             renderInput={(params) => (
                                 <TextField
@@ -151,20 +156,6 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
                                     placeholder={
                                         loading ? "Loading..." : "Select professors"
                                     }
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        endAdornment: (
-                                            <>
-                                                {loading ? (
-                                                    <CircularProgress
-                                                        color="inherit"
-                                                        size={18}
-                                                    />
-                                                ) : null}
-                                                {params.InputProps.endAdornment}
-                                            </>
-                                        ),
-                                    }}
                                 />
                             )}
                             renderTags={(value, getTagProps) =>
@@ -180,14 +171,14 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
                         />
                     </Grid>
 
-                    {/* Assistants */}
-                    <Grid item xs={12} sm={6}>
+                    {/* ROW 4: ASSISTANTS (FULL WIDTH) */}
+                    <Grid item xs={12}>
                         <Autocomplete
                             multiple
                             options={assistantOptions}
-                            getOptionLabel={fullName}
                             value={formData.assistants}
                             onChange={handleChangeAssistants}
+                            getOptionLabel={fullName}
                             loading={loading}
                             renderInput={(params) => (
                                 <TextField
@@ -196,20 +187,6 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
                                     placeholder={
                                         loading ? "Loading..." : "Select assistants"
                                     }
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        endAdornment: (
-                                            <>
-                                                {loading ? (
-                                                    <CircularProgress
-                                                        color="inherit"
-                                                        size={18}
-                                                    />
-                                                ) : null}
-                                                {params.InputProps.endAdornment}
-                                            </>
-                                        ),
-                                    }}
                                 />
                             )}
                             renderTags={(value, getTagProps) =>
@@ -226,6 +203,7 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
                     </Grid>
                 </Grid>
             </DialogContent>
+
             <DialogActions>
                 <Button onClick={resetAndClose}>Cancel</Button>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>

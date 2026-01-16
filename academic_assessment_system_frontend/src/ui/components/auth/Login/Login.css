@@ -1,0 +1,80 @@
+.login-root {
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+}
+
+/* CARD: dark navy bg + white text */
+.login-card {
+    border-radius: 24px !important;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617) !important;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7) !important;
+    border: 1px solid rgba(30, 64, 175, 0.7);
+    color: #f9fafb;
+}
+
+/* All typography inside card -> white */
+.login-card .MuiTypography-root {
+    color: #f9fafb;
+}
+
+.login-title {
+    font-weight: 600 !important;
+}
+
+/* TextFields: white text + labels + nicer outline */
+.login-card .MuiInputBase-input {
+    color: #f9fafb;
+}
+
+.login-card .MuiInputLabel-root {
+    color: rgba(203, 213, 225, 0.9);
+}
+
+.login-card .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(148, 163, 184, 0.7);
+}
+
+.login-card .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #3b82f6;
+}
+
+.login-card .MuiInputBase-input::placeholder {
+    color: rgba(148, 163, 184, 0.9);
+}
+
+/* Error text keeps red but readable on dark bg */
+.login-card .MuiTypography-root.Mui-error {
+    color: #fca5a5;
+}
+
+/* Primary button */
+.login-root .submit-btn {
+    text-transform: none !important;
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    background: linear-gradient(135deg, #38bdf8, #6366f1) !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.6) !important;
+}
+
+.login-root .submit-btn:hover {
+    background: linear-gradient(135deg, #0ea5e9, #4f46e5) !important;
+    transform: translateY(-1px);
+}
+
+/* Secondary button */
+.login-secondary-btn {
+    text-transform: none !important;
+    border-radius: 999px !important;
+    font-weight: 500 !important;
+    color: #e5e7eb !important;
+    border-color: rgba(148, 163, 184, 0.7) !important;
+}
+
+.login-secondary-btn:hover {
+    border-color: #e5e7eb !important;
+}

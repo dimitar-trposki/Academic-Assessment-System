@@ -221,6 +221,16 @@ const ExamGrid = () => {
                         <IconButton
                             size="small"
                             onClick={() => window.location.reload()}
+                            sx={{
+                                color: "#ffffff",
+                                bgcolor: "rgba(255, 255, 255, 0.10)",
+                                boxShadow: "0 6px 14px rgba(0,0,0,0.45)",
+                                backdropFilter: "blur(6px)",
+                                borderRadius: "8px",
+                                "&:hover": {
+                                    bgcolor: "rgba(255, 255, 255, 0.22)",
+                                },
+                            }}
                         >
                             <RefreshIcon fontSize="small"/>
                         </IconButton>
@@ -285,8 +295,7 @@ const ExamGrid = () => {
                                         variant="body2"
                                         color="text.secondary"
                                     >
-                                        You have no exams scheduled for your
-                                        courses.
+                                        You have no exams scheduled for your courses.
                                     </Typography>
                                 ) : (
                                     <Grid container spacing={3}>
@@ -303,19 +312,13 @@ const ExamGrid = () => {
                                                         <ExamCard
                                                             exam={exam}
                                                             onOpenDetails={() =>
-                                                                handleOpenDetails(
-                                                                    exam
-                                                                )
+                                                                handleOpenDetails(exam)
                                                             }
                                                             onEdit={() =>
-                                                                handleOpenEdit(
-                                                                    exam
-                                                                )
+                                                                handleOpenEdit(exam)
                                                             }
                                                             onDelete={() =>
-                                                                handleOpenDelete(
-                                                                    exam
-                                                                )
+                                                                handleOpenDelete(exam)
                                                             }
                                                             showDetails={true}
                                                             showEdit={true}
@@ -387,9 +390,7 @@ const ExamGrid = () => {
                                                         <ExamCard
                                                             exam={exam}
                                                             onOpenDetails={() =>
-                                                                handleOpenDetails(
-                                                                    exam
-                                                                )
+                                                                handleOpenDetails(exam)
                                                             }
                                                             showDetails={true}
                                                             showEdit={false}

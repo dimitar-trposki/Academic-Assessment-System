@@ -1,3 +1,48 @@
-.course-details-dialog .MuiDialog-paper {
-    border-radius: 22px;
+/* src/ui/components/courses/CourseDetails/CourseDetails.css */
+@import "../../../styles/DialogTheme.css";
+
+/* Extra styling specific to course details (chips, title tweaks, etc.) */
+
+.course-details-title .MuiTypography-overline {
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(148, 163, 184, 0.95);
+}
+
+.course-details-title .MuiTypography-h6 {
+    color: #f9fafb;
+}
+
+/* chips at the top right (semester + academic year) */
+.course-details-dialog .MuiChip-root {
+    font-size: 0.72rem;
+}
+
+.course-details-dialog .MuiChip-root:first-of-type {
+    background: #0f172a;
+    color: #f9fafb;
+    border-color: rgba(59, 130, 246, 0.9);
+}
+
+.course-details-dialog .MuiChip-root:last-of-type {
+    background: #1f2937;
+    color: #f9fafb;
+    border-color: rgba(148, 163, 184, 0.9);
+}
+
+.course-details-content {
+    /* extra space if you want; theme already sets vertical padding */
+}
+
+/* Responsive tweaks if needed */
+@media (max-width: 600px) {
+    .course-details-content {
+        padding-inline: 0.75rem !important;
+    }
+}
+
+/*.MuiTypography-root,*/
+/*.MuiTypography-caption,*/
+.css-1blb4m1-MuiTypography-root {
+    color: white !important;
 }

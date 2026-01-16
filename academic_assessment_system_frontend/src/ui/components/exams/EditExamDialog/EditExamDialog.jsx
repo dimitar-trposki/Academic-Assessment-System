@@ -80,9 +80,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
             capacityOfStudents: formData.capacityOfStudents
                 ? Number(formData.capacityOfStudents)
                 : null,
-            course: formData.course
-                ? {id: formData.course.id}
-                : null,
+            course: formData.course ? {id: formData.course.id} : null,
             reservedLaboratories: labs,
             startTime: buildTimeForApi(formData.startTime),
             endTime: buildTimeForApi(formData.endTime),
@@ -102,7 +100,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
             onClose={onClose}
             fullWidth
             maxWidth="md"
-            className="course-dialog-root"
+            className="dialog-theme course-dialog-root"
         >
             <DialogTitle>Edit exam</DialogTitle>
             <DialogContent dividers>
@@ -114,6 +112,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                             fullWidth
                             value={formData.session}
                             onChange={handleChangeField}
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -124,6 +123,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                             fullWidth
                             value={formData.capacityOfStudents}
                             onChange={handleChangeField}
+                            size="small"
                         />
                     </Grid>
 
@@ -136,6 +136,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                             value={formData.dateOfExam}
                             onChange={handleChangeField}
                             InputLabelProps={{shrink: true}}
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
@@ -147,6 +148,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                             value={formData.startTime}
                             onChange={handleChangeField}
                             InputLabelProps={{shrink: true}}
+                            size="small"
                         />
                     </Grid>
                     <Grid item xs={12} sm={3}>
@@ -158,6 +160,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                             value={formData.endTime}
                             onChange={handleChangeField}
                             InputLabelProps={{shrink: true}}
+                            size="small"
                         />
                     </Grid>
 
@@ -175,10 +178,9 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                                     {...params}
                                     label="Course"
                                     placeholder={
-                                        loading
-                                            ? "Loading..."
-                                            : "Select course"
+                                        loading ? "Loading..." : "Select course"
                                     }
+                                    size="small"
                                     InputProps={{
                                         ...params.InputProps,
                                         endAdornment: (
@@ -189,7 +191,10 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                                                         size={18}
                                                     />
                                                 ) : null}
-                                                {params.InputProps.endAdornment}
+                                                {
+                                                    params.InputProps
+                                                        .endAdornment
+                                                }
                                             </>
                                         ),
                                     }}
@@ -207,6 +212,7 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                             value={formData.reservedLaboratories}
                             onChange={handleChangeField}
                             helperText="Comma-separated list, e.g. Lab 1, Lab 2"
+                            size="small"
                         />
                     </Grid>
                 </Grid>

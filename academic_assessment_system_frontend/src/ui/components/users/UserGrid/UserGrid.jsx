@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
+import "./UserGrid.css";
 import {
     Box,
     Button,
@@ -16,6 +17,7 @@ import {
     Paper,
     IconButton,
     Stack,
+    Tooltip,
 } from "@mui/material";
 import {Add, Upload, Download, Delete, Edit, Info} from "@mui/icons-material";
 
@@ -27,6 +29,8 @@ import DeleteUserDialog from "../DeleteUserDialog/DeleteUserDialog.jsx";
 import UserDetails from "../UserDetails/UserDetails.jsx";
 import EditStudentDialog from "../EditStudentDialog/EditStudentDialog.jsx";
 
+const ROLE_ADMIN = "ADMINISTRATOR";
+
 const UserGrid = () => {
     const {
         users,
@@ -34,9 +38,10 @@ const UserGrid = () => {
         onAdd: addUser,
         onEdit: editUser,
         onDelete: deleteUser,
-        importUsers: importUsers,
-        exportUsers: exportUsers,
-        fetchUsers: fetchUsers,
+        importUsers,
+        exportUsers,
+        fetchUsers,
+        me,
     } = useUsers();
 
     const {
@@ -46,11 +51,10 @@ const UserGrid = () => {
         onEdit: editStudent,
         onDeleteWithUser: deleteStudentWithUser,
         onDeleteWithoutUser: deleteStudentWithoutUser,
-        findById: findById,
-        findStudentExamRegistrationByStudentId: findStudentExamRegistrationByStudentId,
-        findCourseEnrollmentByStudentId: findCourseEnrollmentByStudentId,
-        fetchStudents: fetchStudents,
+        fetchStudents,
     } = useStudents();
+
+    const [role, setRole] = useState(null);
 
     const [addDialogOpen, setAddDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -62,9 +66,29 @@ const UserGrid = () => {
     const [editStudentDialogOpen, setEditStudentDialogOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState(null);
 
-    const [deleteContext, setDeleteContext] = useState(null); // { type: "USER" | "STUDENT", entity }
+    const [deleteContext, setDeleteContext] = useState(null);
 
-    // Split users by role
+    useEffect(() => {
+        let mounted = true;
+        if (!me) return;
+
+        me()
+            .then((u) => {
+                if (!mounted) return;
+                setRole(u?.role || null);
+            })
+            .catch(() => {
+                if (!mounted) return;
+                setRole(null);
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, [me]);
+
+    const isAdmin = role === ROLE_ADMIN;
+
     const staffUsers = users.filter((u) => u.userRole === "STAFF");
     const regularUsers = users.filter((u) => u.userRole === "USER");
 
@@ -125,37 +149,31 @@ const UserGrid = () => {
 
     const handleSaveEditStudent = async (student, studentDto, userDto) => {
         try {
-            // 1) апдејти го User (име, презиме, role)
             await editUser(student.userId, userDto);
 
             if (userDto.userRole === "STUDENT") {
-                // 2a) останува студент → само го апдејтираме Student
                 await editStudent(student.id, studentDto);
             } else {
-                // 2b) повеќе не е студент → бриши Student, ама User останува
                 await deleteStudentWithoutUser(student.id);
             }
 
-            await fetchStudents(); // да се рефрешира табелата
+            await fetchStudents();
             handleCloseEditStudent();
         } catch (e) {
             console.error("Failed to edit student/user", e);
         }
     };
 
-    // When adding a user, if studentIndex/major are provided,
-    // also create Student profile linked to that user.
     const handleCreateUser = async (formData) => {
-        const {studentIndex, major, academicRole, ...userData} = formData;
+        const {studentIndex, major, userRole, ...userData} = formData;
 
         let createdUser = null;
 
         try {
             createdUser = await addUser({
                 ...userData,
-                userRole: academicRole,
+                userRole,
             });
-            console.log("Created user:", createdUser);
         } catch (e) {
             console.error("Failed to create USER", e);
             return;
@@ -205,7 +223,7 @@ const UserGrid = () => {
                         userId: id,
                     });
 
-                    await fetchStudents(); // да се рефрешира Students табелата
+                    await fetchStudents();
                 }
             }
 
@@ -232,7 +250,10 @@ const UserGrid = () => {
     };
 
     const handleImportClick = () => {
-        document.getElementById("users-import-input").click();
+        const input = document.getElementById("users-import-input");
+        if (input) {
+            input.click();
+        }
     };
 
     const handleImportChange = async (event) => {
@@ -244,7 +265,7 @@ const UserGrid = () => {
 
         try {
             await importUsers(formData);
-            await fetchStudents(); // refresh students too
+            await fetchStudents();
         } catch (e) {
             console.error("Import failed", e);
         } finally {
@@ -271,65 +292,97 @@ const UserGrid = () => {
 
     if (isLoading) {
         return (
-            <Box display="flex" justifyContent="center" mt={4}>
+            <Box className="user-grid-root user-grid-loading">
                 <CircularProgress/>
+                <Typography variant="body2" sx={{mt: 1}}>
+                    Loading users...
+                </Typography>
             </Box>
         );
     }
 
+    const importTooltipText =
+        "Required header:\n" +
+        "firstName,lastName,email,password,userRole,studentIndex,major\n\n" +
+        "Example for staff: Ivan,Ivanov,ii@gmail.com,Ii@12345,STAFF,,\n" +
+        "Example for user: Ivan,Ivanov,ii@gmail.com,Ii@12345,USER,,\n" +
+        "Example for student: Ivan,Ivanov,ii@gmail.com,Ii@12345,STUDENT,221133,SEIS";
+
     return (
-        <Box>
-            {/* Top buttons */}
-            <Box
-                mb={3}
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-            >
-                <Stack direction="row" spacing={2}>
-                    <Button
-                        variant="contained"
-                        startIcon={<Add/>}
-                        onClick={handleOpenAdd}
-                    >
-                        Add User
-                    </Button>
+        <Box className="user-grid-root">
+            <Box className="user-grid-toolbar">
+                <Typography variant="h6" className="user-grid-title">
+                    Users overview
+                </Typography>
 
-                    <input
-                        id="users-import-input"
-                        type="file"
-                        accept=".csv"
-                        style={{display: "none"}}
-                        onChange={handleImportChange}
-                    />
-                    <Button
-                        variant="outlined"
-                        startIcon={<Upload/>}
-                        onClick={handleImportClick}
-                    >
-                        Import Users
-                    </Button>
+                {isAdmin && (
+                    <Box className="user-grid-toolbar-actions">
+                        <input
+                            id="users-import-input"
+                            type="file"
+                            accept=".csv"
+                            style={{display: "none"}}
+                            onChange={handleImportChange}
+                        />
 
-                    <Button
-                        variant="outlined"
-                        startIcon={<Download/>}
-                        onClick={handleExport}
-                    >
-                        Export Users
-                    </Button>
-                </Stack>
+                        <Tooltip
+                            arrow
+                            title={importTooltipText}
+                            slotProps={{
+                                tooltip: {
+                                    sx: {
+                                        whiteSpace: "pre-line",
+                                        fontSize: "0.8rem",
+                                    },
+                                },
+                            }}
+                        >
+                            <Button
+                                variant="outlined"
+                                startIcon={<Upload/>}
+                                size="small"
+                                onClick={handleImportClick}
+                            >
+                                Import users
+                            </Button>
+                        </Tooltip>
+
+                        <Button
+                            variant="outlined"
+                            startIcon={<Download/>}
+                            size="small"
+                            onClick={handleExport}
+                        >
+                            Export users
+                        </Button>
+                        <Button
+                            variant="contained"
+                            startIcon={<Add/>}
+                            size="small"
+                            onClick={handleOpenAdd}
+                        >
+                            Add user
+                        </Button>
+                    </Box>
+                )}
             </Box>
 
-            <Grid container spacing={3}>
-                {/* STAFF TABLE */}
-                <Grid item xs={12} md={4}>
-                    <Card>
+            <Grid container spacing={3} className="user-grid-sections">
+                {/* STAFF */}
+                <Grid item xs={12}>
+                    <Card className="user-card">
                         <CardContent>
-                            <Typography variant="h6" mb={2}>
+                            <Typography
+                                variant="subtitle1"
+                                className="user-card-title"
+                            >
                                 Staff
                             </Typography>
-                            <TableContainer component={Paper}>
-                                <Table size="small">
+                            <TableContainer
+                                component={Paper}
+                                className="user-table-container"
+                            >
+                                <Table size="small" className="user-table">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>First name</TableCell>
@@ -341,7 +394,7 @@ const UserGrid = () => {
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody>
+                                    <TableBody className="user-table-body">
                                         {staffUsers.map((u) => (
                                             <TableRow key={u.id}>
                                                 <TableCell>
@@ -355,33 +408,37 @@ const UserGrid = () => {
                                                     {u.userRole}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenDetailsUser(
-                                                                u
-                                                            )
-                                                        }
-                                                    >
-                                                        <Info/>
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenEditUser(
-                                                                u
-                                                            )
-                                                        }
-                                                    >
-                                                        <Edit/>
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenDeleteUser(
-                                                                u
-                                                            )
-                                                        }
-                                                    >
-                                                        <Delete/>
-                                                    </IconButton>
+                                                    {isAdmin && (
+                                                        <>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenDetailsUser(
+                                                                        u
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Info/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenEditUser(
+                                                                        u
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Edit/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenDeleteUser(
+                                                                        u
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Delete/>
+                                                            </IconButton>
+                                                        </>
+                                                    )}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -402,15 +459,21 @@ const UserGrid = () => {
                     </Card>
                 </Grid>
 
-                {/* STUDENTS TABLE */}
-                <Grid item xs={12} md={4}>
-                    <Card>
+                {/* STUDENTS */}
+                <Grid item xs={12}>
+                    <Card className="user-card">
                         <CardContent>
-                            <Typography variant="h6" mb={2}>
+                            <Typography
+                                variant="subtitle1"
+                                className="user-card-title"
+                            >
                                 Students
                             </Typography>
-                            <TableContainer component={Paper}>
-                                <Table size="small">
+                            <TableContainer
+                                component={Paper}
+                                className="user-table-container"
+                            >
+                                <Table size="small" className="user-table">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Index</TableCell>
@@ -422,7 +485,7 @@ const UserGrid = () => {
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody>
+                                    <TableBody className="user-table-body">
                                         {students.map((s) => (
                                             <TableRow key={s.id}>
                                                 <TableCell>
@@ -437,33 +500,37 @@ const UserGrid = () => {
                                                 </TableCell>
                                                 <TableCell>{s.major}</TableCell>
                                                 <TableCell align="right">
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenDetailsStudent(
-                                                                s
-                                                            )
-                                                        }
-                                                    >
-                                                        <Info/>
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenEditStudent(
-                                                                s
-                                                            )
-                                                        }
-                                                    >
-                                                        <Edit/>
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenDeleteStudent(
-                                                                s
-                                                            )
-                                                        }
-                                                    >
-                                                        <Delete/>
-                                                    </IconButton>
+                                                    {isAdmin && (
+                                                        <>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenDetailsStudent(
+                                                                        s
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Info/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenEditStudent(
+                                                                        s
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Edit/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenDeleteStudent(
+                                                                        s
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Delete/>
+                                                            </IconButton>
+                                                        </>
+                                                    )}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -484,15 +551,21 @@ const UserGrid = () => {
                     </Card>
                 </Grid>
 
-                {/* USERS TABLE (userRole === USER) */}
-                <Grid item xs={12} md={4}>
-                    <Card>
+                {/* USERS */}
+                <Grid item xs={12}>
+                    <Card className="user-card">
                         <CardContent>
-                            <Typography variant="h6" mb={2}>
+                            <Typography
+                                variant="subtitle1"
+                                className="user-card-title"
+                            >
                                 Users
                             </Typography>
-                            <TableContainer component={Paper}>
-                                <Table size="small">
+                            <TableContainer
+                                component={Paper}
+                                className="user-table-container"
+                            >
+                                <Table size="small" className="user-table">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>First name</TableCell>
@@ -504,7 +577,7 @@ const UserGrid = () => {
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody>
+                                    <TableBody className="user-table-body">
                                         {regularUsers.map((u) => (
                                             <TableRow key={u.id}>
                                                 <TableCell>
@@ -518,33 +591,37 @@ const UserGrid = () => {
                                                     {u.userRole}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenDetailsUser(
-                                                                u
-                                                            )
-                                                        }
-                                                    >
-                                                        <Info/>
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenEditUser(
-                                                                u
-                                                            )
-                                                        }
-                                                    >
-                                                        <Edit/>
-                                                    </IconButton>
-                                                    <IconButton
-                                                        onClick={() =>
-                                                            handleOpenDeleteUser(
-                                                                u
-                                                            )
-                                                        }
-                                                    >
-                                                        <Delete/>
-                                                    </IconButton>
+                                                    {isAdmin && (
+                                                        <>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenDetailsUser(
+                                                                        u
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Info/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenEditUser(
+                                                                        u
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Edit/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() =>
+                                                                    handleOpenDeleteUser(
+                                                                        u
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Delete/>
+                                                            </IconButton>
+                                                        </>
+                                                    )}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -566,7 +643,6 @@ const UserGrid = () => {
                 </Grid>
             </Grid>
 
-            {/* DIALOGS */}
             <AddUserDialog
                 open={addDialogOpen}
                 onClose={handleCloseAdd}
