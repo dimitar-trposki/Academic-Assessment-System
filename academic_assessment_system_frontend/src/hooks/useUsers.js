@@ -59,21 +59,6 @@ const useUsers = () => {
             .catch((error) => console.log(error));
     }, []);
 
-    // const onAdd = useCallback((data) => {
-    //     userRepository
-    //         .add(data)
-    //         .then((response) => {
-    //             console.log("Successfully added a new user.");
-    //             fetchUsers();
-    //             return response.data;
-    //         })
-    //         .catch((error) => {
-    //             console.log(error)
-    //             throw error;
-    //         });
-    //
-    // }, [fetchUsers]);
-
     const onAdd = useCallback(async (data) => {
         try {
             const response = await userRepository.add(data);
@@ -146,18 +131,6 @@ const useUsers = () => {
             })
             .catch((error) => console.log(error));
     }, [fetchUsers]);
-
-    // const importUsers = useCallback(async (data) => {
-    //     try {
-    //         const response = await userRepository.importUsers(data);
-    //         console.log("Successfully imported users.");
-    //         await fetchUsers();
-    //         return response.data;
-    //     } catch (error) {
-    //         console.log(error);
-    //         throw error;
-    //     }
-    // }, [fetchUsers]);
 
     const exportUsers = useCallback(() => {
         return userRepository

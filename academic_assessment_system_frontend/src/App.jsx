@@ -119,7 +119,6 @@ const AppLayout = () => {
                                         ? "nav-btn nav-btn-active"
                                         : "nav-btn"
                                 }
-                                // force links to be white by default
                                 style={{color: "#ffffff"}}
                             >
                                 {item.label}

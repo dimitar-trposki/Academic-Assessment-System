@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
 import examRepository from "../repository/examRepository.js";
-import courseRepository from "../repository/courseRepository.js";
 
 const initialState = {
     "exams": [],

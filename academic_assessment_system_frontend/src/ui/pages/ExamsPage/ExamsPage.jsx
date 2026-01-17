@@ -15,7 +15,7 @@ const ExamsPage = () => {
                         Manage exam sessions, registrations and attendance.
                     </Typography>
                 </Box>
-                {/* Add button is inside ExamGrid */}
+                {}
             </Box>
 
             <Box className="exams-content">

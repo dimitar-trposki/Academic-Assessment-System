@@ -1,6 +1,3 @@
-/* Global dialog visual theme – use with className="dialog-theme" */
-
-/* === PAPER / BACKGROUND / BORDER === */
 .dialog-theme .MuiPaper-root {
     border-radius: 22px !important;
     background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617) !important;
@@ -9,7 +6,6 @@
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.9) !important;
 }
 
-/* === TITLE === */
 .dialog-theme .MuiDialogTitle-root {
     border-bottom: 1px solid rgba(51, 65, 85, 0.7);
     padding-bottom: 0.75rem !important;
@@ -20,7 +16,6 @@
     color: #f9fafb !important;
 }
 
-/* === CONTENT === */
 .dialog-theme .MuiDialogContent-root {
     padding-top: 1.25rem !important;
     padding-bottom: 1.25rem !important;
@@ -41,13 +36,11 @@
     border-color: rgba(51, 65, 85, 0.9) !important;
 }
 
-/* === ACTIONS === */
 .dialog-theme .MuiDialogActions-root {
     border-top: 1px solid rgba(51, 65, 85, 0.9);
     padding: 0.75rem 1.5rem 0.9rem !important;
 }
 
-/* === INPUTS / TEXTFIELDS === */
 .dialog-theme .MuiInputLabel-root {
     color: rgba(209, 213, 219, 0.85) !important;
 }
@@ -79,17 +72,14 @@
     color: rgba(148, 163, 184, 0.9);
 }
 
-/* === CHIPS === */
 .dialog-theme .MuiChip-root {
     border-radius: 999px !important;
 }
 
-/* Make chip labels readable on dark background */
 .dialog-theme .MuiChip-root .MuiChip-label {
     color: #f9fafb !important;
 }
 
-/* === AUTOCOMPLETE DROPDOWN (POPPER) === */
 .MuiAutocomplete-popper .MuiPaper-root {
     background: #020617 !important;
     color: #f9fafb !important;
@@ -106,7 +96,6 @@
     background-color: rgba(37, 99, 235, 0.5) !important;
 }
 
-/* === RESPONSIVE === */
 @media (max-width: 600px) {
     .dialog-theme .MuiDialogContent-root {
         padding-inline: 0.75rem !important;

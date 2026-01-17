@@ -1,4 +1,3 @@
-// src/ui/pages/MyProfile/MyProfile.jsx
 import React, {useEffect, useState} from "react";
 import {
     Box,
@@ -42,17 +41,15 @@ const MyProfile = () => {
     const [staffCourses, setStaffCourses] = useState([]);
     const [courseEnrollments, setCourseEnrollments] = useState([]);
     const [examRegistrations, setExamRegistrations] = useState([]);
-    const [studentProfile, setStudentProfile] = useState(null); // DisplayUserStudentDto
+    const [studentProfile, setStudentProfile] = useState(null);
 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadStudentData = async (userId) => {
-            // 1) all DisplayUserStudentDto
             const usersStudents = await findAllStudents();
             if (!usersStudents) return;
 
-            // 2) find this user's student profile
             const myStudent = usersStudents.find((s) => s.userId === userId);
             if (!myStudent) return;
 
@@ -60,12 +57,10 @@ const MyProfile = () => {
 
             const studentId = myStudent.id;
 
-            // 3) course enrollments
             const enrollments =
                 await findCourseEnrollmentByStudentId(studentId);
             setCourseEnrollments(enrollments || []);
 
-            // 4) exam registrations
             const registrations =
                 await findStudentExamRegistrationByStudentId(studentId);
             setExamRegistrations(registrations || []);
@@ -152,7 +147,6 @@ const MyProfile = () => {
         <Box className="my-profile-root">
             <Card className="my-profile-card">
                 <CardContent className="my-profile-card-content">
-                    {/* HEADER */}
                     <Box className="my-profile-header">
                         <Box className="my-profile-avatar">
                             <span>{initials || "U"}</span>
@@ -175,7 +169,6 @@ const MyProfile = () => {
                         </Box>
                     </Box>
 
-                    {/* PROFILE FIELD CARDS */}
                     <Box className="my-profile-fields-grid">
                         <div className="my-profile-field">
                             <label>FIRST NAME</label>
@@ -199,7 +192,6 @@ const MyProfile = () => {
                             </span>
                         </div>
 
-                        {/* Student-only extra fields */}
                         {role === "STUDENT" && studentProfile && (
                             <>
                                 <div className="my-profile-field">
@@ -215,7 +207,6 @@ const MyProfile = () => {
                         )}
                     </Box>
 
-                    {/* STAFF – ASSIGNED COURSES */}
                     {role === "STAFF" && (
                         <Box className="my-profile-section-card">
                             <Typography
@@ -247,7 +238,6 @@ const MyProfile = () => {
                         </Box>
                     )}
 
-                    {/* STUDENT – ENROLLED COURSES */}
                     {role === "STUDENT" && (
                         <>
                             <Box className="my-profile-section-card">
@@ -279,7 +269,6 @@ const MyProfile = () => {
                                 )}
                             </Box>
 
-                            {/* STUDENT – EXAM REGISTRATIONS */}
                             <Box className="my-profile-section-card">
                                 <Typography
                                     variant="subtitle1"
@@ -311,7 +300,6 @@ const MyProfile = () => {
                         </>
                     )}
 
-                    {/* FOOTER / LOGOUT */}
                     <Box className="my-profile-footer">
                         <Button
                             variant="contained"

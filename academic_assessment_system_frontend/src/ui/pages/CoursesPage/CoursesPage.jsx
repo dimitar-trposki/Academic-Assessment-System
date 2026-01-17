@@ -15,7 +15,7 @@ const CoursesPage = () => {
                         Manage courses, assigned staff and enrolled students.
                     </Typography>
                 </Box>
-                {/* Add button is inside CourseGrid */}
+                {}
             </Box>
 
             <Box className="courses-content">
