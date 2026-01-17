@@ -1,4 +1,3 @@
-// src/ui/components/courses/AddCourseDialog/AddCourseDialog.jsx
 import React, {useState} from "react";
 import "./AddCourseDialog.css";
 
@@ -140,7 +139,6 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
                         />
                     </Grid>
 
-                    {/* ROW 3: PROFESSORS (FULL WIDTH) */}
                     <Grid item xs={12}>
                         <Autocomplete
                             multiple
@@ -171,7 +169,6 @@ const AddCourseDialog = ({open, onClose, onAdd}) => {
                         />
                     </Grid>
 
-                    {/* ROW 4: ASSISTANTS (FULL WIDTH) */}
                     <Grid item xs={12}>
                         <Autocomplete
                             multiple

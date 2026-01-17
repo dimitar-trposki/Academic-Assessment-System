@@ -11,7 +11,6 @@ const ProtectedRoute = ({role}) => {
     if (user === null)
         return <Navigate to="/login" replace/>;
 
-    // ако сакаш role-based за понатаму, ќе користиме user.role кога ќе ја земеш од /me
     if (role && user.role && user.role !== role)
         return <Navigate to="/login" replace/>;
 

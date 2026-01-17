@@ -1,4 +1,3 @@
-// src/ui/components/courses/CourseDetails/CourseDetails.jsx
 import React, {useEffect, useState} from "react";
 import "./CourseDetails.css";
 

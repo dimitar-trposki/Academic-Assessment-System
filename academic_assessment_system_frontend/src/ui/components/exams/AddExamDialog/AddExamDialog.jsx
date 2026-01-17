@@ -46,7 +46,6 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
 
     const buildTimeForApi = (t) => {
         if (!t) return null;
-        // "HH:mm" -> "HH:mm:ss"
         return t.length === 5 ? `${t}:00` : t;
     };
 
@@ -148,7 +147,6 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                         />
                     </Grid>
 
-                    {/* Course */}
                     <Grid item xs={12}>
                         <Autocomplete
                             options={courseOptions}
@@ -187,7 +185,6 @@ const AddExamDialog = ({open, onClose, onAdd}) => {
                         />
                     </Grid>
 
-                    {/* Labs */}
                     <Grid item xs={12}>
                         <TextField
                             label="Reserved laboratories"

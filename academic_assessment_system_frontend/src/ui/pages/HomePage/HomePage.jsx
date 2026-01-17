@@ -111,7 +111,7 @@ const HomePage = () => {
         if (!isLoggedIn) return "All your academic data in one clear view.";
         if (role === ROLE_ADMIN) return "Full control over courses, exams and roles.";
         if (role === ROLE_STAFF) return "Keep teaching and assessment aligned — fast and consistent.";
-        return "Browse everything safely — view-only access.";
+        return "Browse everything safely — access handled by user role.";
     }, [isLoggedIn, role]);
 
     const subtitle =

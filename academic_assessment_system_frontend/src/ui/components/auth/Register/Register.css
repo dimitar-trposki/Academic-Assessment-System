@@ -8,7 +8,6 @@
     justify-content: center;
 }
 
-/* MAIN CARD — navy themed */
 .register-card {
     border-radius: 24px !important;
     background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617) !important;
@@ -17,7 +16,6 @@
     color: #f9fafb !important;
 }
 
-/* All text inside card becomes white */
 .register-card .MuiTypography-root {
     color: #f9fafb !important;
 }
@@ -26,22 +24,18 @@
     font-weight: 600 !important;
 }
 
-/* Subtext gray for readability */
 .register-card .MuiTypography-root[color="text.secondary"] {
     color: rgba(203, 213, 225, 0.85) !important;
 }
 
-/* Input text white */
 .register-card .MuiInputBase-input {
     color: #f9fafb !important;
 }
 
-/* Input labels */
 .register-card .MuiInputLabel-root {
     color: rgba(203, 213, 225, 0.85) !important;
 }
 
-/* Outlined border */
 .register-card .MuiOutlinedInput-notchedOutline {
     border-color: rgba(148, 163, 184, 0.5) !important;
 }
@@ -50,17 +44,14 @@
     border-color: #3b82f6 !important;
 }
 
-/* Error text */
 .register-card .MuiFormHelperText-root.Mui-error {
     color: #fca5a5 !important;
 }
 
-/* Placeholder coloring */
 .register-card .MuiInputBase-input::placeholder {
     color: rgba(148, 163, 184, 0.7) !important;
 }
 
-/* Register button */
 .register-submit-btn {
     text-transform: none !important;
     border-radius: 999px !important;

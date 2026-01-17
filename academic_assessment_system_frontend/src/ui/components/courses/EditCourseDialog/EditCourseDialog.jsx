@@ -1,4 +1,3 @@
-// src/ui/components/courses/EditCourseDialog/EditCourseDialog.jsx
 import React, {useEffect, useState} from "react";
 import "./EditCourseDialog.css";
 
@@ -92,7 +91,6 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
             <DialogContent dividers>
                 <Grid container spacing={2}>
 
-                    {/* ROW 1: CODE + NAME */}
                     <Grid item xs={12} md={6}>
                         <TextField
                             fullWidth
@@ -113,7 +111,6 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
                         />
                     </Grid>
 
-                    {/* ROW 2: YEAR + SEMESTER */}
                     <Grid item xs={12} md={6}>
                         <TextField
                             fullWidth
@@ -135,7 +132,6 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
                         />
                     </Grid>
 
-                    {/* ROW 3: PROFESSORS */}
                     <Grid item xs={12}>
                         <Autocomplete
                             multiple
@@ -167,7 +163,6 @@ const EditCourseDialog = ({open, onClose, course, onEdit}) => {
                         />
                     </Grid>
 
-                    {/* ROW 4: ASSISTANTS */}
                     <Grid item xs={12}>
                         <Autocomplete
                             multiple

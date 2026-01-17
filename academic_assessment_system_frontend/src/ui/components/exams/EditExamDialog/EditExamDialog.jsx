@@ -164,7 +164,6 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                         />
                     </Grid>
 
-                    {/* Course */}
                     <Grid item xs={12}>
                         <Autocomplete
                             options={courseOptions}
@@ -203,7 +202,6 @@ const EditExamDialog = ({open, onClose, exam, onEdit}) => {
                         />
                     </Grid>
 
-                    {/* Labs */}
                     <Grid item xs={12}>
                         <TextField
                             label="Reserved laboratories"

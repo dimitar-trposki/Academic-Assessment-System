@@ -6,7 +6,6 @@
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.95);
 }
 
-/* Mini-tables inside the dialog */
 .user-details-table-container {
     background: #020617;
     border-radius: 18px;
@@ -14,7 +13,6 @@
     box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
 }
 
-/* Header row – blue gradient, white text */
 .user-details-table-container .MuiTableHead-root th {
     background: linear-gradient(
             90deg,
@@ -27,7 +25,6 @@
     border-bottom: 1px solid rgba(15, 23, 42, 0.9);
 }
 
-/* Body rows – alternating navy / blue; text always light */
 .user-details-table-container .MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
     background: rgba(37, 99, 235, 0.26);
 }

@@ -1,4 +1,3 @@
-// src/ui/components/courses/CourseCard/CourseCard.jsx
 import React from "react";
 import "./CourseCard.css";
 

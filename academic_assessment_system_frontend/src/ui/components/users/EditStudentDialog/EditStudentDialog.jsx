@@ -155,7 +155,6 @@ const EditStudentDialog = ({open, onClose, student, onSave}) => {
                                 ),
                             }}
                         />
-
                         <TextField
                             label="Student index"
                             name="studentIndex"

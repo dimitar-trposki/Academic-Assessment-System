@@ -1,7 +1,4 @@
-/* src/ui/components/courses/CourseDetails/CourseDetails.css */
 @import "../../../styles/DialogTheme.css";
-
-/* Extra styling specific to course details (chips, title tweaks, etc.) */
 
 .course-details-title .MuiTypography-overline {
     letter-spacing: 0.18em;
@@ -13,7 +10,6 @@
     color: #f9fafb;
 }
 
-/* chips at the top right (semester + academic year) */
 .course-details-dialog .MuiChip-root {
     font-size: 0.72rem;
 }
@@ -31,18 +27,14 @@
 }
 
 .course-details-content {
-    /* extra space if you want; theme already sets vertical padding */
 }
 
-/* Responsive tweaks if needed */
 @media (max-width: 600px) {
     .course-details-content {
         padding-inline: 0.75rem !important;
     }
 }
 
-/*.MuiTypography-root,*/
-/*.MuiTypography-caption,*/
 .css-1blb4m1-MuiTypography-root {
     color: white !important;
 }

@@ -1,4 +1,3 @@
-// src/ui/components/courses/CourseGrid/CourseGrid.jsx
 import React, {useEffect, useMemo, useState} from "react";
 import "./CourseGrid.css";
 
@@ -287,7 +286,7 @@ const CourseGrid = () => {
                                                 item
                                                 xs={12}
                                                 sm={6}
-                                                md={6}   // 2 per row on desktop
+                                                md={6}
                                                 key={`my-${course.id}`}
                                             >
                                                 <CourseCard
@@ -325,7 +324,7 @@ const CourseGrid = () => {
                                             item
                                             xs={12}
                                             sm={6}
-                                            md={6}   // 2 per row
+                                            md={6}
                                             key={course.id}
                                         >
                                             <CourseCard
@@ -361,7 +360,7 @@ const CourseGrid = () => {
                                                 item
                                                 xs={12}
                                                 sm={6}
-                                                md={6}  // 2 per row
+                                                md={6}
                                                 key={`my-${course.id}`}
                                             >
                                                 <CourseCard

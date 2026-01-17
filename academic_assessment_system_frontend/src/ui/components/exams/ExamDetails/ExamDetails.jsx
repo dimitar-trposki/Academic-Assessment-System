@@ -167,7 +167,6 @@ const ExamDetails = ({
             });
     };
 
-    /* Safely read data even while details is still loading */
     const courseName =
         details?.course?.courseName || details?.courseName || "Exam";
     const date = details?.dateOfExam || "";
@@ -223,7 +222,6 @@ const ExamDetails = ({
                         </Stack>
                     </Box>
 
-                    {/* RIGHT SIDE: capacity + registered + rounded button */}
                     <Stack
                         direction="column"
                         spacing={0.75}

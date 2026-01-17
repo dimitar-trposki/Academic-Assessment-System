@@ -85,7 +85,7 @@ public class JwtSecurityWebConfig {
                         .requestMatchers("/api/courses", "/api/exams", "/api/students", "/api/users")
                         .permitAll()
                         .requestMatchers("/api/courses/**", "/api/exams/**", "/api/students/**", "/api/users/**")
-                        .hasAnyRole("ADMIN", "STAFF", "STUDENT")
+                        .hasAnyRole("ADMINISTRATOR", "STAFF", "STUDENT")
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

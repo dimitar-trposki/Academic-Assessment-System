@@ -1,4 +1,3 @@
-// src/ui/components/courses/DeleteCourseDialog/DeleteCourseDialog.jsx
 import React from "react";
 import "./DeleteCourseDialog.css";
 
