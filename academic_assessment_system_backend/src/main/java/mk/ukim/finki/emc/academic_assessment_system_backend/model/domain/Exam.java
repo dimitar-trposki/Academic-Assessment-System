@@ -23,10 +23,10 @@ public class Exam {
     @Column(nullable = false, length = 100)
     private String session;
 
-    @Column(nullable = false)
+    @Column(name = "date_of_exam", nullable = false)
     private LocalDate dateOfExam;
 
-    @Column(nullable = false)
+    @Column(name = "capacity_of_students", nullable = false)
     private Integer capacityOfStudents;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -37,10 +37,10 @@ public class Exam {
     @Column(name = "laboratory", nullable = false, length = 100)
     private List<String> reservedLaboratories;
 
-    @Column(nullable = false)
+    @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

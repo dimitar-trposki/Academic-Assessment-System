@@ -26,16 +26,16 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(name = "course_code", nullable = false, length = 30)
     private String courseCode;
 
-    @Column(nullable = false, length = 200)
+    @Column(name = "course_name", nullable = false, length = 200)
     private String courseName;
 
     @Column(nullable = false)
     private Integer semester;
 
-    @Column(nullable = false)
+    @Column(name = "academic_year", nullable = false)
     private Integer academicYear;
 
     @OneToMany(
